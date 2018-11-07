@@ -1,0 +1,25 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Dmitrijs Sitovs <info@scandiweb.com / dmitrijssh@scandiweb.com / dsitovs@gmail.com>
+ * @copyright Copyright (c) 2018 Scandiweb, Ltd (http://scandiweb.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
+    <preference for="Mulberry\Warranty\Api\Config\HelperInterface" type="Mulberry\Warranty\Helper\ConfigHelper"/>
+    <preference for="Mulberry\Warranty\Api\ItemUpdaterInterface" type="Mulberry\Warranty\Helper\ItemUpdater"/>
+    <preference for="Mulberry\Warranty\Api\ItemOptionInterface" type="Mulberry\Warranty\Helper\ItemOptionHelper"/>
+    <preference for="Mulberry\Warranty\Api\Rest\ServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\Service"/>
+    <preference for="Mulberry\Warranty\Api\Rest\WarrantyServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\Warranty"/>
+    <preference for="Mulberry\Warranty\Api\Rest\SendOrderServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\SendOrder"/>
+    <preference for="Mulberry\Warranty\Api\Rest\CancelOrderServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\CancelOrder"/>
+    <preference for="Mulberry\Warranty\Api\Rest\GetPersonalizedWarrantyServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\GetPersonalizedWarranty"/>
+    <preference for="Magento\Catalog\Block\Product\View\Options" type="Mulberry\Warranty\Block\Product\View\Options"/>
+
+    <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
+        <plugin name="MulberryConfigurableProductExtend" type="Mulberry\Warranty\Plugin\ConfigurablePlugin"/>
+    </type>
+</config>

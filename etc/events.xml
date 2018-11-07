@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Dmitrijs Sitovs <info@scandiweb.com / dmitrijssh@scandiweb.com / dsitovs@gmail.com>
+ * @copyright Copyright (c) 2018 Scandiweb, Ltd (http://scandiweb.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
+    <event name="checkout_cart_product_add_after">
+        <observer name="add_warranty_product" instance="Mulberry\Warranty\Observer\AddWarranty"/>
+    </event>
+    <event name="sales_quote_item_set_product">
+        <observer name="set_warranty_product_name" instance="Mulberry\Warranty\Observer\SetWarrantyProductName"/>
+    </event>
+    <event name="checkout_submit_all_after">
+        <observer name="mulberry_send_order_information" instance="Mulberry\Warranty\Observer\SendOrder"/>
+    </event>
+    <event name="order_cancel_after">
+        <observer name="mulberry_cancel_order" instance="Mulberry\Warranty\Observer\CancelOrder"/>
+    </event>
+</config>

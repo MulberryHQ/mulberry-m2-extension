@@ -1,0 +1,24 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Dmitrijs Sitovs <info@scandiweb.com / dmitrijssh@scandiweb.com / dsitovs@gmail.com>
+ * @copyright Copyright (c) 2018 Scandiweb, Ltd (http://scandiweb.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Store:etc/config.xsd">
+    <default>
+        <mulberry_warranty>
+            <general>
+                <active>1</active>
+                <api_url>https://staging.getmulberry.com</api_url>
+                <partner_url>https://partner-staging.getmulberry.com</partner_url>
+                <platform_domain>mulberry-staging.myshopify.com</platform_domain>
+                <retailer_id>scandiweb_placeholder</retailer_id>
+                <api_token>e19c3077e779e666029bbb5b0fae7962</api_token>
+            </general>
+        </mulberry_warranty>
+    </default>
+</config>

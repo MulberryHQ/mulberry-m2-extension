@@ -1,0 +1,58 @@
+<?php
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Dmitrijs Sitovs <info@scandiweb.com / dmitrijssh@scandiweb.com / dsitovs@gmail.com>
+ * @copyright Copyright (c) 2018 Scandiweb, Ltd (http://scandiweb.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+?>
+
+<?php
+/**
+ * @var $block Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container
+ */
+?>
+<?php $product = $block->getProduct(); ?>
+<?php $buttonTitle = __('Add to Cart'); ?>
+
+<?php if ($product->isSaleable()): ?>
+    <div class="product-options-mulberry">
+        <div class="box-tocart">
+            <div class="fieldset">
+                <div class="mulberry-inline-container"></div>
+                <div class="actions">
+                    <input type="hidden" id="warranty" name="warranty[<?= $block->escapeHtml($product->getSku()); ?>]" value=""/>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script type="text/javascript">
+        window.mulberryProductData = {
+            product: {
+                id: "<?= $block->escapeHtml($product->getSku()); ?>",
+                title: "<?= $block->escapeHtml($block->escapeQuote($product->getName())); ?>",
+                price: <?= (float)$product->getFinalPrice(); ?>,
+                description: "<?= $block->escapeHtml($product->getDescription()); ?>"
+            },
+            originalSku: "<?= $block->escapeHtml($product->getSku()); ?>",
+            originalPrice: <?= (float)$product->getFinalPrice(); ?>,
+            originalDescription: "<?= $block->escapeHtml($product->getDescription()); ?>"
+        };
+
+        window.mulberryConfigData = {
+            "containerClass": "mulberry-inline-container",
+            "magentoDomain": "<?= $block->getPlatformDomain(); ?>",
+            "mulberryUrl": "<?= $block->getApiUrl(); ?>",
+            "partnerUrl": "<?= $block->getPartnerUrl(); ?>"
+        }
+    </script>
+    <script type="text/x-magento-init">
+        {
+            "#product_addtocart_form": {
+                "mulberryProductPage": {}
+            }
+        }
+    </script>
+<?php endif; ?>
