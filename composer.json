@@ -1,19 +1,20 @@
 {
-  "name": "scandiweb/module-mulberry",
+  "name": "MulberryHQ/mulberry-m2-extension",
   "type": "magento2-module",
   "description": "GetMulberry.com Magento module",
   "license": "proprietary",
+  "version": "1.0.0",
   "support": {
-    "source": "https://bitbucket.org/scandiweb/module-mulberry/src/master/"
+    "source": "https://github.com/MulberryHQ/mulberry-m2-extension.git"
   },
   "authors": [
     {
-      "name": "Dmitrijs Sitovs",
-      "email": "info@scandiweb.com"
+      "name": "Mulberry",
+      "email": "support@getmulberry.com"
     }
   ],
   "require": {
-      "php": "~7.0.13|~7.1.0"
+      "php": "~7.0.13|~7.1.0|~7.2.0"
   },
   "autoload": {
     "files": [
