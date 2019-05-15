@@ -110,20 +110,22 @@ class InstallData implements InstallDataInterface
          * Make these attributes applicable to warranty products
          */
         foreach ($fieldList as $field) {
-            $applyTo = explode(
-                ',',
-                $eavSetup->getAttribute(Product::ENTITY, $field, 'apply_to')
-            );
-
-            if (!in_array(Warranty::TYPE_ID, $applyTo)) {
-                $applyTo[] = Warranty::TYPE_ID;
-
-                $eavSetup->updateAttribute(
-                    Product::ENTITY,
-                    $field,
-                    'apply_to',
-                    implode(',', $applyTo)
+            if ($attributeApplyTo = $eavSetup->getAttribute(Product::ENTITY, $field, 'apply_to')) {
+                $applyTo = explode(
+                    ',',
+                    $attributeApplyTo
                 );
+
+                if (!in_array(Warranty::TYPE_ID, $applyTo)) {
+                    $applyTo[] = Warranty::TYPE_ID;
+
+                    $eavSetup->updateAttribute(
+                        Product::ENTITY,
+                        $field,
+                        'apply_to',
+                        implode(',', $applyTo)
+                    );
+                }
             }
         }
     }

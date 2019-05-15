@@ -8,7 +8,7 @@ Composer installation:
 
 ```
 1. Add module repository to your composer repositories
-2. Run composer require scandiweb/module-mulberry
+2. Run composer require MulberryHQ/mulberry-m2-extension
 3. Run ./bin/magento setup:upgrade command
 ```
 
@@ -47,16 +47,23 @@ Merchant (admin user) has an ability to configure the following fields in Magent
     - This setting is used to specify retailer ID generated in Mulberry system (for example - mulberry_placeholder)
 - API Token
     - This setting is used to specify Mulberry API Token in order to authorize merchant, when requesting warranty product information on Product Details Page
+- Enable Post Purchase
+    - This setting is used to enable/disable Mulberry "Post Purchase" hook
 
 #### Warranty Product Configuration
 
-As soon as module is installed, it automatically creates custom virtual product type called "Warranty Product" as well as product placeholder that is used to store Mulberry warranty information during customer journey. As soon as warranty information is retrieved from Mulberry service, product name as well as price is updated on-the-fly. Such product can be found with the following SKU: `mulberry-warranty-product`.
+As soon as module is installed, it automatically creates custom virtual product type called "Warranty Product" as well as product placeholder that is used to store Mulberry warranty information during customer journey. As soon as warranty information is retrieved from Mulberry service, product name as well as price is updated on-the-fly. Such product placeholders can be found with the following SKUs:
+- `mulberry-warranty-product`
+- `mulberry-warranty-24-months`
+- `mulberry-warranty-36-months`
+- `mulberry-warranty-48-months`
+- `mulberry-warranty-60-months`
 
 In order to set custom image for a warranty product, it can be achieved using default Magento product image assignment functionality.
 
 **IMPORTANT!!!**
 
-**Do not modify SKU of this product, otherwise system won't be able to recognize and add warranty product along with an original Magento product.**
+**Do not modify SKU of the placeholder product, otherwise system won't be able to recognize and add warranty product along with an original Magento product.**
 
 ### Technical Documentation
 
@@ -77,7 +84,7 @@ This event is used to update product name of warranty product (quote item)
 
 - checkout_submit_all_after
 
-This event is used to perform checkout success hook. As soon as order is placed, Magento performs API call in order to send payload to the Mulberry platform to notify that warranty product has been purchased. API call is performed only if Magento order contains warranty product
+This event is used to perform checkout success & post purchase hook. As soon as order is placed, Magento performs API call in order to send payload to the Mulberry platform to notify that warranty product has been purchased. API call is performed only if Magento order contains warranty product
 
 #### Quote item options modifications
 

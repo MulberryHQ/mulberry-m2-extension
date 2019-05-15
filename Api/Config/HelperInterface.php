@@ -52,4 +52,11 @@ interface HelperInterface
      * @return null|string
      */
     public function getApiToken();
+
+    /**
+     * Yes/No flag whether it's required to send order data on order place
+     *
+     * @return mixed
+     */
+    public function isSendCartDataEnabled();
 }

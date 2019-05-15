@@ -17,8 +17,12 @@
     </event>
     <event name="checkout_submit_all_after">
         <observer name="mulberry_send_order_information" instance="Mulberry\Warranty\Observer\SendOrder"/>
+        <observer name="mulberry_send_cart_information" instance="Mulberry\Warranty\Observer\SendCart"/>
     </event>
     <event name="order_cancel_after">
         <observer name="mulberry_cancel_order" instance="Mulberry\Warranty\Observer\CancelOrder"/>
+    </event>
+    <event name="sales_order_place_before">
+        <observer name="mulberry_generate_order_uuid" instance="Mulberry\Warranty\Observer\GenerateOrderUuid"/>
     </event>
 </config>

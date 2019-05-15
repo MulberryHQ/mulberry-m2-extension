@@ -12,13 +12,14 @@ define([
     'jquery',
     'mulberryLibrary',
     'underscore',
-    'priceUtils',
+    'priceUtils'
 ], function ($, mulberry, _, utils) {
     'use strict';
 
     $.widget('mulberry.productPage', {
         productUpdateTimer: null,
         mulberryProductUpdateDelay: 1000,
+        mbApi: null,
 
         _create: function () {
             mulberry.loadLibrary();
@@ -50,12 +51,53 @@ define([
          */
         registerProduct: function registerProduct()
         {
-            window.mulberry.init(
-                window.mulberryProductData.product,
-                window.mulberryConfigData.containerClass,
-                window.mulberryConfigData.magentoDomain,
-                window.mulberryConfigData.mulberryUrl,
-                window.mulberryConfigData.partnerUrl
+            var self = this;
+
+            this.mbApi = new window.mulberry.MulberryApi(
+                window.mulberryConfigData.partnerUrl,
+                "/apps/mulberry"
+            );
+
+            jQuery.get(
+                window.mulberryConfigData.partnerUrl + '/api/warranty_settings',
+                { external_id: window.mulberryConfigData.retailerId },
+                function (settings) {
+                    if (!settings.has_inline && !settings.has_modal) {
+                        return;
+                    }
+
+                    self.mbApi.getWarrantyOffer(window.mulberryProductData.product)
+                        .then(data => data.json())
+                        .then(data => {
+                            if (data.length === 0) {
+                                return;
+                            }
+
+                            if (settings.has_modal) {
+                                window.mbModal = new window.mulberry.MulberryModal();
+
+                                mbModal.init(
+                                    window.mulberryProductData.product,
+                                    "mb-modal",
+                                    window.mulberryConfigData.mulberryUrl,
+                                    data,
+                                    settings.company_name
+                                );
+                            }
+
+                            if (settings.has_inline) {
+                                window.mbInline = new window.mulberry.MulberryInline();
+                                window.mbInline.init(
+                                    window.mulberryProductData.product,
+                                    "mulberry-inline-container",
+                                    window.mulberryConfigData.retailerId,
+                                    window.mulberryConfigData.mulberryUrl,
+                                    data,
+                                    settings.company_name
+                                );
+                            }
+                        });
+                }
             );
         },
 
@@ -157,9 +199,10 @@ define([
          */
         updateMulberryProduct: function updateMulberryProduct(newPrice)
         {
-            var newConfig = this.prepareMulberryProduct(newPrice);
+            var newConfig = this.prepareMulberryProduct(newPrice),
+                self = this;
 
-            if (!window.mulberry || !window.mulberry.mulberryModal || !window.mulberry.mulberryInline) {
+            if (!window.mulberry || !window.mulberry.MulberryModal || !window.mulberry.MulberryInline) {
                 return;
             }
 
@@ -171,7 +214,13 @@ define([
             clearTimeout(this.productUpdateTimer);
             this.productUpdateTimer = setTimeout(function () {
                 if (this.hasConfigurationChanges(newConfig)) {
-                    window.mulberry.updateProduct(window.mulberryProductData.product);
+                    self.mbApi.getWarrantyOffer(window.mulberryProductData.product)
+                        .then(response => response.json())
+                        .then(response => {
+                            const event = new CustomEvent('mulberry:update', { detail: { response } });
+                            document.dispatchEvent(event);
+                        });
+
                     window.mulberryProductData.product = newConfig;
                     $('#warranty').attr('name', 'warranty[' + window.mulberryProductData.product.id + ']');
                 }

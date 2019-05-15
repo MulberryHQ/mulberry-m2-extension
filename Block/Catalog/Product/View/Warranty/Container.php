@@ -113,4 +113,12 @@ class Container extends View
     {
         return $this->warrantyConfigHelper->getPlatformDomain() ?: $_SERVER['SERVER_NAME'];
     }
+
+    /**
+     * @return string|null
+     */
+    public function getRetailerId()
+    {
+        return $this->warrantyConfigHelper->getRetailerId();
+    }
 }

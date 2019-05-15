@@ -34,6 +34,10 @@ class WarrantyItem extends DefaultItem
             $data['product_url'] = '';
         }
 
+        if (isset($data['is_visible_in_site_visibility'])) {
+            $data['is_visible_in_site_visibility'] = false;
+        }
+
         return $data;
     }
 }

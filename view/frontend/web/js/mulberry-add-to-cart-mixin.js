@@ -42,7 +42,7 @@ define([
                 this.toggleMulberryWarranty(e.detail, true);
 
                 if (!this.isCartButtonDisabled()) {
-                    window.mulberry.mulberryModal.close();
+                    window.mbModal.close();
                     this.element.submit();
                     this.options.mulberryOverlayActive = false;
                 }
@@ -50,7 +50,7 @@ define([
 
             document.addEventListener('mulberry:add-product', (e) => {
                 if (!this.isCartButtonDisabled()) {
-                    window.mulberry.mulberryModal.close();
+                    window.mbModal.close();
                     this.element.submit();
                     this.options.mulberryOverlayActive = false;
                 }
@@ -73,12 +73,12 @@ define([
         });
 
         targetModule.prototype.submitForm = wrapper.wrap(submitForm, function (original) {
-            if (this.options.mulberryOverlayActive || !window.mulberry || !window.mulberry.mulberryModal || !window.mulberry.mulberryInline) {
+            if (this.options.mulberryOverlayActive || !window.mulberry || !window.mbModal || !window.mbInline) {
                 return original();
             }
 
             if (this.getMulberryWarrantyElement().val() === '') {
-                window.mulberry.open();
+                window.mbModal.open();
                 this.options.mulberryOverlayActive = true;
             } else {
                 return original();

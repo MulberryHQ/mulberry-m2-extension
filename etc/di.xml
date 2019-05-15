@@ -15,6 +15,7 @@
     <preference for="Mulberry\Warranty\Api\Rest\ServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\Service"/>
     <preference for="Mulberry\Warranty\Api\Rest\WarrantyServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\Warranty"/>
     <preference for="Mulberry\Warranty\Api\Rest\SendOrderServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\SendOrder"/>
+    <preference for="Mulberry\Warranty\Api\Rest\SendCartServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\SendCart"/>
     <preference for="Mulberry\Warranty\Api\Rest\CancelOrderServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\CancelOrder"/>
     <preference for="Mulberry\Warranty\Api\Rest\GetPersonalizedWarrantyServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\GetPersonalizedWarranty"/>
     <preference for="Magento\Catalog\Block\Product\View\Options" type="Mulberry\Warranty\Block\Product\View\Options"/>
@@ -22,4 +23,13 @@
     <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
         <plugin name="MulberryConfigurableProductExtend" type="Mulberry\Warranty\Plugin\ConfigurablePlugin"/>
     </type>
+
+    <!-- Extend order grid -->
+    <virtualType name="Magento\Sales\Model\ResourceModel\Order\Grid" type="Magento\Sales\Model\ResourceModel\Grid">
+        <arguments>
+            <argument name="columns" xsi:type="array">
+                <item name="order_identifier" xsi:type="string">sales_order.order_identifier</item>
+            </argument>
+        </arguments>
+    </virtualType>
 </config>

@@ -24,6 +24,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     const XML_PATH_PLATFORM_DOMAIN = 'mulberry_warranty/general/platform_domain';
     const XML_PATH_RETAILER_ID = 'mulberry_warranty/general/retailer_id';
     const XML_PATH_API_TOKEN = 'mulberry_warranty/general/api_token';
+    const XML_PATH_SEND_CART_DATA = 'mulberry_warranty/general/send_cart_data';
 
     /**
      * {@inheritdoc}
@@ -87,6 +88,17 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_API_TOKEN,
+            ScopeInterface::SCOPE_STORE
+        );
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isSendCartDataEnabled()
+    {
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_SEND_CART_DATA,
             ScopeInterface::SCOPE_STORE
         );
     }

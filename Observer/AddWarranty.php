@@ -106,14 +106,9 @@ class AddWarranty implements ObserverInterface
     {
         try {
             /**
-             * @var Product $warrantyProduct
-             */
-            $warrantyProduct = $this->getWarrantyPlaceholderProduct();
-
-            /**
              * Add warranty products equal to the amount of original product added to cart.
              */
-            if ($this->helper->isActive() && $warrantyProduct) {
+            if ($this->helper->isActive()) {
                 /**
                  * @var Product $originalProduct
                  * @var Quote $quote
@@ -145,6 +140,11 @@ class AddWarranty implements ObserverInterface
                          */
                         $options = $this->itemOptionHelper->prepareWarrantyOption($originalQuoteItem, $warrantyHash);
                         $warrantyOptions = $this->itemOptionHelper->prepareWarrantyInformation($warrantyHash);
+
+                        /**
+                         * @var Product $warrantyProduct
+                         */
+                        $warrantyProduct = $this->getWarrantyPlaceholderProduct($warrantyOptions);
 
                         $this->warrantyItemUpdater->addWarrantyItemOption($warrantyProduct, $options);
                         $this->warrantyItemUpdater->addAdditionalOptions($warrantyProduct, $warrantyOptions);
@@ -210,13 +210,16 @@ class AddWarranty implements ObserverInterface
     /**
      * Retrieve Magento placeholder product to be used as a warranty product
      *
+     * @param array $warrantyOptions
      * @return \Magento\Catalog\Api\Data\ProductInterface
      * @throws NoSuchEntityException
      */
-    protected function getWarrantyPlaceholderProduct()
+    protected function getWarrantyPlaceholderProduct(array $warrantyOptions = [])
     {
+        $placeholderSku = (is_array($warrantyOptions) && isset($warrantyOptions['duration_months'])) ? sprintf('mulberry-warranty-%s-months', $warrantyOptions['duration_months']) : 'mulberry-warranty-product';
+
         return $this->productRepository->get(
-            'mulberry-warranty-product',
+            $placeholderSku,
             false,
             $this->storeManager->getStore()->getId(),
             true

@@ -65,6 +65,11 @@
                     Auth token to be used for API calls.
                     ]]></comment>
                 </field>
+
+                <field id="send_cart_data" translate="label" type="select" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Enable Post Purchase</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
             </group>
         </section>
     </system>

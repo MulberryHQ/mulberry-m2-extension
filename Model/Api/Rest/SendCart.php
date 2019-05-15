@@ -11,15 +11,20 @@ namespace Mulberry\Warranty\Model\Api\Rest;
 
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Address;
+use Mulberry\Warranty\Api\Rest\SendCartServiceInterface;
 use Mulberry\Warranty\Api\Rest\ServiceInterface;
-use Mulberry\Warranty\Api\Rest\SendOrderServiceInterface;
 use Magento\Sales\Model\Order\Item;
 use Magento\Directory\Model\CountryFactory;
 use Mulberry\Warranty\Api\Config\HelperInterface;
 use Mulberry\Warranty\Model\Product\Type;
 
-class SendOrder implements SendOrderServiceInterface
+class SendCart implements SendCartServiceInterface
 {
+    /**
+     * @var array $itemsPayload
+     */
+    private $itemsPayload = [];
+
     /**
      * @var ServiceInterface $service
      */
@@ -31,16 +36,6 @@ class SendOrder implements SendOrderServiceInterface
     private $configHelper;
 
     /**
-     * @var bool $orderHasWarrantyProducts
-     */
-    private $orderHasWarrantyProducts = false;
-
-    /**
-     * @var array $warrantyItemsPayload
-     */
-    private $warrantyItemsPayload = [];
-
-    /**
      * @var OrderInterface $order
      */
     private $order;
@@ -49,21 +44,6 @@ class SendOrder implements SendOrderServiceInterface
      * @var CountryFactory $countryFactory
      */
     private $countryFactory;
-
-    /**
-     * Data mapping for warranty attributes,
-     * stored as follows:
-     * Magento additional information key => ['Mulberry API key']
-     *
-     * @var array $warrantyAttributesMapping
-     */
-    protected $warrantyAttributesMapping = [
-        'warranty_price' => ['cost'],
-        'service_type' => ['service_type'],
-        'warranty_hash' => ['warranty_hash'],
-        'duration_months' => ['duration_months'],
-        'product_name' => ['product', 'name'],
-    ];
 
     /**
      * SendOrder constructor.
@@ -86,17 +66,19 @@ class SendOrder implements SendOrderServiceInterface
      *
      * @return mixed
      */
-    public function sendOrder(OrderInterface $order)
+    public function sendCart(OrderInterface $order)
     {
         $this->order = $order;
-        $this->prepareItemsPayload();
 
-        if (!$this->orderHasWarrantyProducts) {
+        if (!$this->configHelper->isActive() || !$this->configHelper->isSendCartDataEnabled()) {
             return [];
         }
 
+        $this->order = $order;
+        $this->prepareItemsPayload();
+
         $payload = $this->getOrderPayload();
-        $response = $this->service->makeRequest(self::ORDER_SEND_ENDPOINT_URL, $payload, ServiceInterface::POST);
+        $response = $this->service->makeRequest(self::CART_SEND_ENDPOINT_URL, $payload, ServiceInterface::POST);
 
         return $this->parseResponse($response);
     }
@@ -106,11 +88,15 @@ class SendOrder implements SendOrderServiceInterface
      */
     private function prepareItemsPayload()
     {
-        foreach ($this->order->getAllItems() as $item) {
+        foreach ($this->order->getAllVisibleItems() as $item) {
+            /**
+             * We don't need to send warranty products as a payload
+             */
             if ($item->getProductType() === Type::TYPE_ID) {
-                $this->orderHasWarrantyProducts = true;
-                $this->prepareItemPayload($item);
+                continue;
             }
+
+            $this->prepareItemPayload($item);
         }
     }
 
@@ -119,18 +105,11 @@ class SendOrder implements SendOrderServiceInterface
      */
     private function getOrderPayload()
     {
-        $order = $this->order;
-
-        $payload = [
-            'id' => $order->getIncrementId(),
-            'email' => $order->getCustomerEmail(),
-            'phone' => $order->getBillingAddress()->getTelephone(),
-            'cart_token' => $order->getOrderIdentifier(),
+        return [
+            'line_items' => $this->itemsPayload,
             'billing_address' => $this->prepareAddressData(),
-            'line_items' => $this->warrantyItemsPayload,
+            'order_id' => $this->order->getOrderIdentifier(),
         ];
-
-        return $payload;
     }
 
     /**
@@ -148,12 +127,14 @@ class SendOrder implements SendOrderServiceInterface
         return [
             'first_name' => $billingAddress->getFirstname(),
             'last_name' => $billingAddress->getLastname(),
-            'address1' => $billingAddress->getStreetLine(1),
-            'address2' => $billingAddress->getStreetLine(2),
+            'address1' => $billingAddress->getStreet(1),
+            'phone' => $billingAddress->getTelephone(),
+            'email' => $billingAddress->getEmail(),
             'city' => $billingAddress->getCity(),
-            'state' => $billingAddress->getRegionCode(),
             'zip' => $billingAddress->getPostcode(),
+            'state' => $billingAddress->getRegionCode(),
             'country' => $this->countryFactory->create()->loadByCode($billingAddress->getCountryId())->getName(),
+            'address2' => $billingAddress->getStreet(2),
             'country_code' => $billingAddress->getCountryId(),
             'province_code' => $billingAddress->getRegionCode(),
         ];
@@ -167,14 +148,11 @@ class SendOrder implements SendOrderServiceInterface
      */
     private function prepareItemPayload(Item $item)
     {
-        $warrantyProductData = $item->getBuyRequest()->getWarrantyProduct();
-
         for ($i = 0; $i < (int) $item->getQtyOrdered(); $i++) {
-            $this->warrantyItemsPayload[] = [
+            $this->itemsPayload[] = [
                 'product_id' => $item->getId(),
                 'product_price' => $item->getPrice(),
                 'product_title' => $item->getName(),
-                'warranty_hash' => $warrantyProductData['warranty_hash'],
             ];
         }
     }
