@@ -11,15 +11,13 @@ namespace Mulberry\Warranty\Controller\Mulberry\Get\Personalized;
 
 use Magento\Backend\App\Action\Context;
 use Magento\Framework\App\Action\Action;
-use Magento\Framework\App\CsrfAwareActionInterface;
-use Magento\Framework\App\Request\InvalidRequestException;
 use Magento\Framework\App\RequestInterface;
 use Magento\Framework\Controller\Result\Json;
 use Magento\Framework\Controller\Result\JsonFactory;
+use Magento\Framework\Data\Form\FormKey;
 use Mulberry\Warranty\Model\Api\Rest\GetPersonalizedWarranty;
-use Magento\Framework\App\Action\HttpPostActionInterface;
 
-class Warranty extends Action implements CsrfAwareActionInterface, HttpPostActionInterface
+class Warranty extends Action
 {
     /**
      * @var JsonFactory $resultJsonFactory
@@ -31,14 +29,31 @@ class Warranty extends Action implements CsrfAwareActionInterface, HttpPostActio
      */
     private $getPersonalizedWarrantyService;
 
+    /**
+     * @var FormKey|mixed
+     */
+    private $formKey;
+
     public function __construct(
         Context $context,
         JsonFactory $resultJsonFactory,
-        GetPersonalizedWarranty $getPersonalizedWarrantyService
+        GetPersonalizedWarranty $getPersonalizedWarrantyService,
+        FormKey $formKey
     ) {
         parent::__construct($context);
         $this->resultJsonFactory = $resultJsonFactory;
         $this->getPersonalizedWarrantyService = $getPersonalizedWarrantyService;
+        $this->formKey = $formKey;
+
+        /**
+         * Add Magento 2.3 CsrfAwareAction compatibility
+         */
+        if (interface_exists("\Magento\Framework\App\CsrfAwareActionInterface")) {
+            $request = $this->getRequest();
+            if ($request instanceof RequestInterface && $request->isPost() && empty($request->getParam('form_key'))) {
+                $request->setParam('form_key', $this->formKey->getFormKey());
+            }
+        }
     }
 
     /**
@@ -66,31 +81,5 @@ class Warranty extends Action implements CsrfAwareActionInterface, HttpPostActio
     private function preparePayload()
     {
         return \Zend_Json::decode($this->getRequest()->getContent());
-    }
-
-    /**
-     * Create exception in case CSRF validation failed.
-     * Return null if default exception will suffice.
-     *
-     * @param RequestInterface $request
-     *
-     * @return InvalidRequestException|null
-     */
-    public function createCsrfValidationException(RequestInterface $request): ?InvalidRequestException
-    {
-        return null;
-    }
-
-    /**
-     * Perform custom request validation.
-     * Return null if default validation is needed.
-     *
-     * @param RequestInterface $request
-     *
-     * @return bool|null
-     */
-    public function validateForCsrf(RequestInterface $request): ?bool
-    {
-        return true;
     }
 }
