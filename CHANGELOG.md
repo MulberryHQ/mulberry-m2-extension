@@ -11,6 +11,8 @@ Mulberry_Warranty changelog
 - Extended order grid with order UUID
 - Extended order item section with warranty information
 - Separated warranty product placeholders
+- FE user journey updates based on API changes
+- Added public token config field
 
 0.1.0:
 - Initial Magento functionality

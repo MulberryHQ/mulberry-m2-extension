@@ -54,6 +54,13 @@ interface HelperInterface
     public function getApiToken();
 
     /**
+     * Returns public token used to initialize offer on the FE
+     *
+     * @return mixed
+     */
+    public function getPublicToken();
+
+    /**
      * Yes/No flag whether it's required to send order data on order place
      *
      * @return mixed

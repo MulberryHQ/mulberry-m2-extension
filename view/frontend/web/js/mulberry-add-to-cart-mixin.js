@@ -38,25 +38,37 @@ define([
          * Add Mulberry product listeners
          */
         targetModule.prototype.addMulberryListeners = function () {
-            document.addEventListener('mulberry:add-warranty', (e) => {
-                this.toggleMulberryWarranty(e.detail, true);
+            var self = this;
 
-                if (!this.isCartButtonDisabled()) {
-                    window.mbModal.close();
-                    this.element.submit();
-                    this.options.mulberryOverlayActive = false;
-                }
-            });
+            window.mulberry.modal.onWarrantySelect = function (warranty) {
+                if (!self.isCartButtonDisabled()) {
+                    self.toggleMulberryWarranty(warranty, true);
 
-            document.addEventListener('mulberry:add-product', (e) => {
-                if (!this.isCartButtonDisabled()) {
-                    window.mbModal.close();
-                    this.element.submit();
-                    this.options.mulberryOverlayActive = false;
+                    window.mulberry.modal.close();
+                    self.element.submit();
+                    self.options.mulberryOverlayActive = false;
+
+                    /**
+                     * Reset value for warranty element
+                     */
+                    self.getMulberryWarrantyElement().val('');
                 }
-            });
+            };
+
+            window.mulberry.modal.onWarrantyDecline = () => {
+                if (!self.isCartButtonDisabled()) {
+                    window.mulberry.modal.close();
+                    self.element.submit();
+                    self.options.mulberryOverlayActive = false;
+                }
+            };
         };
 
+        /**
+         * Perform check whether add to cart button is active
+         *
+         * @returns {*|jQuery|boolean}
+         */
         targetModule.prototype.isCartButtonDisabled = function () {
             var addToCartButton = $(this.element).find(this.options.addToCartButtonSelector);
 
@@ -64,7 +76,7 @@ define([
         };
 
         targetModule.prototype._create = wrapper.wrap(create, function (original) {
-            if (window.mulberry) {
+            if (window.mulberry.modal) {
                 this.addMulberryListeners();
                 this.options.mulberryOverlayActive = false;
             }
@@ -72,13 +84,16 @@ define([
             return original();
         });
 
+        /**
+         * Register events on form submit
+         */
         targetModule.prototype.submitForm = wrapper.wrap(submitForm, function (original) {
-            if (this.options.mulberryOverlayActive || !window.mulberry || !window.mbModal || !window.mbInline) {
+            if (this.options.mulberryOverlayActive || !window.mulberry || !window.mulberry.modal || !window.mulberry.inline) {
                 return original();
             }
 
             if (this.getMulberryWarrantyElement().val() === '') {
-                window.mbModal.open();
+                window.mulberry.modal.open();
                 this.options.mulberryOverlayActive = true;
             } else {
                 return original();

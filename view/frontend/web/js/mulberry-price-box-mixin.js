@@ -15,8 +15,7 @@ define([
 
     return function (widget) {
         $.widget('mage.priceBox', widget, {
-            updatePrice: function updatePrice(newPrices)
-            {
+            updatePrice: function updatePrice(newPrices) {
                 this._super(newPrices);
 
                 $('#product_addtocart_form').trigger('updateMulberryProduct', [this.cache.displayPrices.finalPrice.final]);

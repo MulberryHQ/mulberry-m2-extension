@@ -121,4 +121,12 @@ class Container extends View
     {
         return $this->warrantyConfigHelper->getRetailerId();
     }
+
+    /**
+     * @return mixed
+     */
+    public function getPublicToken()
+    {
+        return $this->warrantyConfigHelper->getPublicToken();
+    }
 }
