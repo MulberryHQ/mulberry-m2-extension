@@ -55,7 +55,7 @@ define([
                 }
             };
 
-            window.mulberry.modal.onWarrantyDecline = () => {
+            window.mulberry.modal.onWarrantyDecline = function () {
                 if (!self.isCartButtonDisabled()) {
                     window.mulberry.modal.close();
                     self.element.submit();
