@@ -150,7 +150,7 @@ class SendCart implements SendCartServiceInterface
     {
         for ($i = 0; $i < (int) $item->getQtyOrdered(); $i++) {
             $this->itemsPayload[] = [
-                'product_id' => $item->getId(),
+                'product_id' => $item->getSku(),
                 'product_price' => $item->getPrice(),
                 'product_title' => $item->getName(),
             ];

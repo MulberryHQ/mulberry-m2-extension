@@ -13,6 +13,7 @@ Mulberry_Warranty changelog
 - Separated warranty product placeholders
 - FE user journey updates based on API changes
 - Added public token config field
+- API payload adjustments
 
 0.1.0:
 - Initial Magento functionality

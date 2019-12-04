@@ -105,6 +105,7 @@ class CancelOrder implements CancelOrderServiceInterface
     {
         $payload = [
             'cancelled_date' => $this->date->date()->format('Y-m-d'),
+            'order_id' => $this->order->getIncrementId(),
             'line_items' => $this->warrantyItemsPayload,
         ];
 
@@ -118,12 +119,11 @@ class CancelOrder implements CancelOrderServiceInterface
      */
     private function prepareItemPayload(Item $item)
     {
-        $warrantyProductData = $item->getBuyRequest()->getWarrantyProduct();
+        $originalProductData = $item->getBuyRequest()->getOriginalProduct();
 
         for ($i = 0; $i < (int) $item->getQtyCanceled(); $i++) {
             $this->warrantyItemsPayload[] = [
-                'order_id' => $item->getId(),
-                'warranty_hash' => $warrantyProductData['warranty_hash']
+                'product_id' => $originalProductData['product_sku'],
             ];
         }
     }
