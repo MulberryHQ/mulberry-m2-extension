@@ -63,24 +63,26 @@ define([
 
             window.mulberry.core.getWarrantyOffer(window.mulberryProductData.product)
                 .then(function (offers) {
-                    var settings = window.mulberry.core.settings;
+                    if (offers.length) {
+                        var settings = window.mulberry.core.settings;
 
-                    if (settings.has_modal) {
-                        window.mulberry.modal.init({
-                            offers,
-                            settings
-                        });
-                    }
+                        if (settings.has_modal) {
+                            window.mulberry.modal.init({
+                                offers,
+                                settings
+                            });
+                        }
 
-                    if (settings.has_inline) {
-                        window.mulberry.inline.init({
-                            offers: offers,
-                            settings: settings,
-                            selector: '.mulberry-inline-container',
-                            onWarrantyToggle: function(warranty) {
-                                self.toggleWarranty(warranty.offer, warranty.isSelected);
-                            }
-                        });
+                        if (settings.has_inline) {
+                            window.mulberry.inline.init({
+                                offers: offers,
+                                settings: settings,
+                                selector: '.mulberry-inline-container',
+                                onWarrantyToggle: function(warranty) {
+                                    self.toggleWarranty(warranty.offer, warranty.isSelected);
+                                }
+                            });
+                        }
                     }
                 });
         },
