@@ -13,9 +13,6 @@
       "email": "support@getmulberry.com"
     }
   ],
-  "require": {
-      "php": "~7.0.13|~7.1.0|~7.2.0"
-  },
   "autoload": {
     "files": [
       "registration.php"
