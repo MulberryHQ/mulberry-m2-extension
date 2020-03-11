@@ -11,7 +11,7 @@
 <page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
     <body>
         <referenceBlock name="checkout.onepage.review.item.renderers">
-            <block class="Mulberry\Warranty\Block\Cart\Item\Renderer\Warranty" name="checkout.onepage.review.item.renderers.warranty" as="warranty" template="Magento_Checkout::onepage/review/item.phtml" cacheable="false"/>
+            <block class="Mulberry\Warranty\Block\Cart\Item\Renderer\Warranty" name="checkout.onepage.review.item.renderers.warranty" as="warranty" template="Magento_Checkout::onepage/review/item.phtml" />
         </referenceBlock>
     </body>
 </page>
