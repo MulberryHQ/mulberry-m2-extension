@@ -12,12 +12,12 @@
     <body>
         <!-- No Custom Options -->
         <referenceContainer name="product.info.form.content">
-            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container" name="warranty.product.container.no.options" after="product.info.addtocart" template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml" cacheable="false"/>
+            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container" name="warranty.product.container.no.options" after="product.info.addtocart" template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml" />
         </referenceContainer>
 
         <!-- With Custom Options -->
         <referenceContainer name="product.info.form.options">
-            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container" name="warranty.product.container.with.options" after="product.info.addtocart.additional" template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml" cacheable="false"/>
+            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container" name="warranty.product.container.with.options" after="product.info.addtocart.additional" template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml" />
         </referenceContainer>
     </body>
 </page>
