@@ -1,102 +1,100 @@
 # Mulberry Warranty Extension
 
-Mulberry Warranty extension allows to add additional warranty product along with original Magento product.
+Mulberry Warranty extension allows the addition of an additional warranty product to an original Magento product.
 
 ## Installation
 
-Composer installation:
+### Composer installation:
 
-```
 1. Add module repository to your composer repositories
-2. Run composer require MulberryHQ/mulberry-m2-extension
-3. Run ./bin/magento setup:upgrade command
-```
+2. Run `composer require MulberryHQ/mulberry-m2-extension`
+3. Run `./bin/magento setup:upgrade` command
 
-Manual installation:
 
-```
-1. Create Mulberry/Warranty folder in app/code directory within your Magento root folder
-2. Extract module contents in that folder
-3. Run ./bin/magento setup:upgrade command
-```
+### Module uninstall:
 
-Module uninstall:
+To uninstall, please refer to the official Magento docs at [https://devdocs.magento.com/guides/v2.2/install-gde/install/cli/install-cli-uninstall-mods.html](https://devdocs.magento.com/guides/v2.2/install-gde/install/cli/install-cli-uninstall-mods.html)
 
-In order to uninstall module, please check official Magento docs as a reference,
-https://devdocs.magento.com/guides/v2.2/install-gde/install/cli/install-cli-uninstall-mods.html
+The module uninstall script performs the following actions:
 
-Module uninstall script performs the following actions:
-- Remove module specific system config values from `core_config_data` table
-- Remove warranty product from "apply_to" list for specific Magento attributes (price, cost, weight)
-- Remove all Magento products with type_id equal to `warranty`. It will automatically remove warranty products from active Magento quotes
+- Removes the module specific system config values from the `core_config_data` table.
+- Removes the warranty product from the "apply_to" list for specific Magento attributes (price, cost, weight).
+- Removes all Magento products with `type_id == warranty`. This automatically removea warranty products from active Magento quotes.
 
-## Configuration and Documentation
+## Configuration
 
-#### Module Configuration
+### Module Configuration
 
-Merchant (admin user) has an ability to configure the following fields in Magento admin, those are required in order to initialize Mulberry warranty iframe on Product Details Page:
-- Enable Mulberry Warranty Block
-    - This flag allows merchant to trigger enable/disable for Mulberry module functionality
-- Mulberry API URL
-    - This setting is used to specify base URL used for API requests (for example - https://staging.getmulberry.com)
-- Mulberry Partner Base URL
-    - This setting is used to specify Mulberry Partner URL. This URL is used to perform BackEnd API requests as well as initialize iframe on PDP
-- Platform Domain Name
-    - This setting is used to specify merchant's domain name, if no value is set, global value of $_SERVER['SERVER_NAME'] variable is used
-- Mulberry Retailer ID
-    - This setting is used to specify retailer ID generated in Mulberry system (for example - mulberry_placeholder)
-- API Token
-    - This setting is used to specify Mulberry API Token in order to authorize merchant, when requesting warranty product information on Product Details Page
-- Enable Post Purchase
-    - This setting is used to enable/disable Mulberry "Post Purchase" hook
+A merchant (admin user) can configure the following fields in Magento admin, which are required to initialize a Mulberry warranty iframe on the Product Details Page:
 
-#### Warranty Product Configuration
+- **Enable Mulberry Warranty Block**
+    - Enables/disables the Mulberry module.
+- **Mulberry API URL**
+    - Sets base URL used for API requests (e.g. `https://www.getmulberry.com`).
+- **Mulberry Partner Base URL**
+    - Sets the Mulberry Partner URL. This URL is used to perform backend API requests as well as to initialize the iframe on the Product Details Page (PDP). e.g `partner.getmulberry.com`.
+- **Platform Domain Name**
+    - Sets the merchant's domain name. If no value is set, the global value of `$_SERVER['SERVER_NAME']` is used.
+- **Mulberry Retailer ID**
+    - Sets the retailer ID generated in the Mulberry system.
+- **API Token**
+    - Sets the Mulberry API Token for merchant authorization, when requesting warranty product information on the PDP.
+- **Enable Post Purchase**
+    - Enables/disables the Mulberry "Post Purchase" hook.
 
-As soon as module is installed, it automatically creates custom virtual product type called "Warranty Product" as well as product placeholder that is used to store Mulberry warranty information during customer journey. As soon as warranty information is retrieved from Mulberry service, product name as well as price is updated on-the-fly. Such product placeholders can be found with the following SKUs:
+### Warranty Product Configuration
+
+When the module is installed, it automatically creates 
+
+- A custom virtual product type called `Warranty Product`.
+- A product placeholder that is used to store Mulberry warranty information during the customer journey. 
+
+When warranty information is retrieved from the Mulberry service, the product name and price are updated on-the-fly. These product placeholders can be found with the following SKUs:
+
 - `mulberry-warranty-product`
 - `mulberry-warranty-24-months`
 - `mulberry-warranty-36-months`
 - `mulberry-warranty-48-months`
 - `mulberry-warranty-60-months`
 
-In order to set custom image for a warranty product, it can be achieved using default Magento product image assignment functionality.
+To set a custom image for a warranty product, use the [default Magento product image functionality](https://docs.magento.com/m1/ce/user_guide/catalog/product-images.html).
 
 **IMPORTANT!!!**
 
-**Do not modify SKU of the placeholder product, otherwise system won't be able to recognize and add warranty product along with an original Magento product.**
+Please do **not** modify the SKU of the placeholder product. Otherwise the system won't be able to recognize and add a warranty product for an original Magento product.
 
-### Technical Documentation
+## Technical Documentation
 
-#### Product Details Page
-Mulberry iframe with warranty products is initialized as soon as DOM is fully loaded on Product Details Page.
+### Product Details Page
+As soon as the DOM is fully loaded on Product Details Page, the Mulberry iframe displaying warranty products is initialized.
 
-#### Used Magento event observers
+### Magento event observers
 
-In order to add warranty product to the cart as well as process it during customer journey, module listens to the following Magento event observers:
+In order to add a warranty product to the cart, as well as process it during the customer journey, the Mulberry module listens to the following Magento event observers:
 
-- checkout_cart_product_add_after
+- `checkout_cart_product_add_after`
 
-At this step, module checks, if warranty product's hash has been passed as a form request. If yes, Magento warranty product placeholder is loaded using SKU. Afterwards, Rest API request is performed in order to retrieve warranty product's information (for example - name, price, service_type etc). All of this data is stored under `warranty_information` of particular quote item within `quote_item_option` table
+On this event, the module checks if the warranty product's hash has been passed as a form request. If so, a Magento warranty product placeholder is loaded using its SKU. Next, a REST API request is made to retrieve the warranty product's information (e.g. name, price, service_type, etc.). All of this data is stored under `warranty_information` of the particular quote item within the `quote_item_option` table.
 
-- sales_quote_item_set_product
+- `sales_quote_item_set_product`
 
-This event is used to update product name of warranty product (quote item)
+On this event, the module updates the product name of the warranty product (quote item).
 
-- checkout_submit_all_after
+- `checkout_submit_all_after`
 
-This event is used to perform checkout success & post purchase hook. As soon as order is placed, Magento performs API call in order to send payload to the Mulberry platform to notify that warranty product has been purchased. API call is performed only if Magento order contains warranty product
+On this event, the module runs the checkout success & post purchase hook. As soon as the order is placed, Magento makes an API call to the Mulberry platform, notifying it that the warranty product has been purchased. The API call is made only if the Magento order contains a warranty product.
 
-#### Quote item options modifications
+### Quote item options modifications
 
-In order to store the information of purchased warranty product, module uses the following custom product options:
+In order to store a warranty product's data, the module uses the following custom product options:
 
-- warranty_information
+- `warranty_information`
 
-This option contains parsed API response about warranty product added to the cart (name, price & other information)
+This option contains a parsed API response about the warranty product added to the cart (name, price & other information).
 
-- additional_options
+- `additional_options`
 
-This option uses default Magento functionality to display custom options applied to the product. Information is displayed across shopping cart/checkout/order pages. In case with warranty products, module stores and displays the following information:
+This option uses the default Magento functionality to display custom options applied to the product. This information is displayed on the shopping cart, checkout, and order pages. If there are warranty products, the module stores and displays the following information:
 
-    - Service type, for example "Accidental Damage Replacement"
-    - Duration Months, int value that specifies duration of the extended warranty for particular product (for example, "36")
+- `Service type`, e.g. "Accidental Damage Replacement".
+- `Duration Months`, an integer value that specifies duration of the extended warranty for particular product in months (for example, "36").
