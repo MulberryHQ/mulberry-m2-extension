@@ -72,29 +72,20 @@ As soon as the DOM is fully loaded on Product Details Page, the Mulberry iframe 
 
 In order to add a warranty product to the cart, as well as process it during the customer journey, the Mulberry module listens to the following Magento event observers:
 
-- `checkout_cart_product_add_after`
+- `checkout_cart_product_add_after` On this event, the module checks if the warranty product's hash has been passed as a form request. If so, a Magento warranty product placeholder is loaded using its SKU. Next, a REST API request is made to retrieve the warranty product's information (e.g. name, price, service_type, etc.). All of this data is stored under `warranty_information` of the particular quote item within the `quote_item_option` table.
 
-On this event, the module checks if the warranty product's hash has been passed as a form request. If so, a Magento warranty product placeholder is loaded using its SKU. Next, a REST API request is made to retrieve the warranty product's information (e.g. name, price, service_type, etc.). All of this data is stored under `warranty_information` of the particular quote item within the `quote_item_option` table.
+- `sales_quote_item_set_product` On this event, the module updates the product name of the warranty product (quote item).
 
-- `sales_quote_item_set_product`
-
-On this event, the module updates the product name of the warranty product (quote item).
-
-- `checkout_submit_all_after`
-
-On this event, the module runs the checkout success & post purchase hook. As soon as the order is placed, Magento makes an API call to the Mulberry platform, notifying it that the warranty product has been purchased. The API call is made only if the Magento order contains a warranty product.
+- `checkout_submit_all_after` On this event, the module runs the checkout success & post purchase hook. As soon as the order is placed, Magento makes an API call to the Mulberry platform, notifying it that the warranty product has been purchased. The API call is made only if the Magento order contains a warranty product.
 
 ### Quote item options modifications
 
 In order to store a warranty product's data, the module uses the following custom product options:
 
-- `warranty_information`
+- `warranty_information` This option contains a parsed API response about the warranty product added to the cart (name, price & other information).
 
-This option contains a parsed API response about the warranty product added to the cart (name, price & other information).
-
-- `additional_options`
-
-This option uses the default Magento functionality to display custom options applied to the product. This information is displayed on the shopping cart, checkout, and order pages. If there are warranty products, the module stores and displays the following information:
+- `additional_options` This option uses the default Magento functionality to display custom options applied to the product. This information is displayed on the shopping cart, checkout, and order pages. If there are warranty products, the module stores and displays the following information:
 
 - `Service type`, e.g. "Accidental Damage Replacement".
+
 - `Duration Months`, an integer value that specifies duration of the extended warranty for particular product in months (for example, "36").
