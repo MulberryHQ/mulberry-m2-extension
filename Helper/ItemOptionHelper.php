@@ -111,6 +111,7 @@ class ItemOptionHelper extends AbstractHelper implements ItemOptionInterface
         return [
             'product' => $originalProductBuyRequest->getProduct(),
             'product_sku' => $originalQuoteItem->getSku(),
+            'product_name' => $originalQuoteItem->getName(),
             'selected_configurable_option' => $originalProductBuyRequest->getSelectedConfigurableOption(),
         ];
     }

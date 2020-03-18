@@ -64,8 +64,9 @@ class ItemUpdater extends AbstractHelper implements ItemUpdaterInterface
         if ($warrantyOptions = $this->itemOptionHelper->getWarrantyOption($quoteItem)) {
             $optionsInformation = $warrantyOptions->getData();
 
-            if (isset($optionsInformation['warranty_product']['name'])) {
-                $quoteItem->setName($optionsInformation['warranty_product']['name']);
+            if (isset($optionsInformation['original_product']['product_name'])) {
+                $itemName = sprintf('Warranty - %s', $optionsInformation['original_product']['product_name']);
+                $quoteItem->setName($itemName);
             }
         }
 

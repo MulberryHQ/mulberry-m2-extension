@@ -32,7 +32,6 @@ class Warranty implements WarrantyServiceInterface
         'service_type' => ['service_type'],
         'warranty_hash' => ['warranty_hash'],
         'duration_months' => ['duration_months'],
-        'product_name' => ['product', 'name'],
     ];
 
     /**
@@ -79,7 +78,6 @@ class Warranty implements WarrantyServiceInterface
                 'service_type' => $warrantyProduct['service_type'],
                 'warranty_hash' => $warrantyProduct['warranty_hash'],
                 'duration_months' => $warrantyProduct['duration_months'],
-                'name' => sprintf('Warranty - %s', $warrantyProduct['product']['name']),
             ];
         }
 
