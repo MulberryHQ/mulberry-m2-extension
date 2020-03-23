@@ -19,7 +19,7 @@ The module uninstall script performs the following actions:
 
 - Removes the module specific system config values from the `core_config_data` table.
 - Removes the warranty product from the "apply_to" list for specific Magento attributes (price, cost, weight).
-- Removes all Magento products with `type_id == warranty`. This automatically removea warranty products from active Magento quotes.
+- Removes all Magento products with `type_id == warranty`. This automatically removes warranty products from active Magento quotes.
 
 ## Configuration
 
