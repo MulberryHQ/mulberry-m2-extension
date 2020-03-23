@@ -1,6 +1,6 @@
 # Mulberry Warranty Extension
 
-Mulberry Warranty extension allows the addition of an additional warranty product to an original Magento product.
+The Mulberry Warranty extension allows the addition of an additional warranty product to an original Magento product.
 
 ## Installation
 
