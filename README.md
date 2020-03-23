@@ -66,7 +66,7 @@ Please do **not** modify the SKU of the placeholder product. Otherwise the syste
 ## Technical Documentation
 
 ### Product Details Page
-As soon as the DOM is fully loaded on Product Details Page, the Mulberry iframe displaying warranty products is initialized.
+As soon as the DOM is fully loaded on the Product Details Page, the Mulberry iframe displaying warranty products is initialized.
 
 ### Magento event observers
 
