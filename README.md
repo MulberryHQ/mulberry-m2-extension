@@ -7,7 +7,7 @@ The Mulberry Warranty extension allows the addition of an additional warranty pr
 ### Composer installation:
 
 1. Add module repository to your composer repositories
-2. Run `composer require MulberryHQ/mulberry-m2-extension`
+2. Run `composer require getmulberry/mulberry-m2-extension`
 3. Run `./bin/magento setup:upgrade` command
 
 
@@ -44,10 +44,10 @@ A merchant (admin user) can configure the following fields in Magento admin, whi
 
 ### Warranty Product Configuration
 
-When the module is installed, it automatically creates 
+When the module is installed, it automatically creates
 
 - A custom virtual product type called `Warranty Product`.
-- A product placeholder that is used to store Mulberry warranty information during the customer journey. 
+- A product placeholder that is used to store Mulberry warranty information during the customer journey.
 
 When warranty information is retrieved from the Mulberry service, the product name and price are updated on-the-fly. These product placeholders can be found with the following SKUs:
 
