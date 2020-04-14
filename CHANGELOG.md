@@ -1,5 +1,7 @@
 Mulberry_Warranty changelog
 ========================
+1.0.1:
+- Fixed typo in README installation instructions
 
 1.0.0:
 - Added order UUID generation functionality
