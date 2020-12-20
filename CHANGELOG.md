@@ -1,5 +1,11 @@
 Mulberry_Warranty changelog
 ========================
+
+1.0.2:
+- Fixed content parse for the product "description" field
+- Added product URL, breadcrumbs & images to the window.mulberryProductData.product variable
+- Added "modal" check in the add-to-cart mixin
+
 1.0.1:
 - Fixed typo in README installation instructions
 

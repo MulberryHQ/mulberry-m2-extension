@@ -76,7 +76,7 @@ define([
         };
 
         targetModule.prototype._create = wrapper.wrap(create, function (original) {
-            if (window.mulberry.modal) {
+            if (window.mulberry?.modal) {
                 this.addMulberryListeners();
                 this.options.mulberryOverlayActive = false;
             }
@@ -88,7 +88,7 @@ define([
          * Register events on form submit
          */
         targetModule.prototype.submitForm = wrapper.wrap(submitForm, function (original) {
-            if (this.options.mulberryOverlayActive || !window.mulberry || !window.mulberry.modal || !window.mulberry.inline) {
+            if (this.options.mulberryOverlayActive || !window.mulberry || !window.mulberry.modal || !window.mulberry.inline || !window.mulberry.core.offers.length) {
                 return original();
             }
 

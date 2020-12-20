@@ -170,12 +170,12 @@ define([
                 sku += customOptionsSku;
             }
 
-            return {
+            var updatedInformation = {
                 id: sku,
-                title: window.mulberryProductData.product.title,
-                price: newPrice ? newPrice : window.mulberryProductData.originalPrice,
-                description: window.mulberryProductData.originalDescription
+                price: newPrice
             }
+
+            return Object.assign(window.mulberryProductData.product, updatedInformation);
         },
 
         /**
@@ -199,6 +199,7 @@ define([
              */
             clearTimeout(this.productUpdateTimer);
             this.productUpdateTimer = setTimeout(function () {
+
                 if (this.hasConfigurationChanges(newConfig)) {
                     window.mulberry.core.getWarrantyOffer(window.mulberryProductData.product);
 
@@ -227,7 +228,7 @@ define([
          * @param optionsConfig
          * @private
          */
-        _getOptionSku: function getOptionValue(element, optionsConfig)
+        _getOptionSku: function _getOptionSku(element, optionsConfig)
         {
             var optionValue = element.val(),
                 optionId = utils.findOptionId(element[0]),

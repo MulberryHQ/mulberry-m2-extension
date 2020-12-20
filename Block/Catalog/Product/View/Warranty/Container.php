@@ -12,6 +12,9 @@ namespace Mulberry\Warranty\Block\Catalog\Product\View\Warranty;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\View;
+use Magento\Catalog\Helper\Data;
+use Magento\Catalog\Model\Product\Image\UrlBuilder;
+use Magento\Framework\Data\Collection;
 use Magento\Framework\Json\EncoderInterface as JsonEncoder;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Framework\Url\EncoderInterface;
@@ -27,11 +30,20 @@ class Container extends View
     /**
      * @var HelperInterface $warrantyConfigHelper
      */
-    protected $warrantyConfigHelper;
+    private $warrantyConfigHelper;
+
+    /**
+     * @var Data $catalogHelper
+     */
+    private $catalogHelper;
+
+    /**
+     * @var UrlBuilder
+     */
+    private $imageUrlBuilder;
 
     /**
      * Container constructor.
-     *
      * @param HelperInterface $warrantyConfigHelper
      * @param Context $context
      * @param EncoderInterface $urlEncoder
@@ -43,6 +55,7 @@ class Container extends View
      * @param Session $customerSession
      * @param ProductRepositoryInterface $productRepository
      * @param PriceCurrencyInterface $priceCurrency
+     * @param Data $catalogHelper
      * @param array $data
      */
     public function __construct(
@@ -57,6 +70,8 @@ class Container extends View
         Session $customerSession,
         ProductRepositoryInterface $productRepository,
         PriceCurrencyInterface $priceCurrency,
+        Data $catalogHelper,
+        UrlBuilder $imageUrlBuilder,
         array $data = []
     ) {
         parent::__construct(
@@ -73,6 +88,8 @@ class Container extends View
             $data
         );
 
+        $this->catalogHelper = $catalogHelper;
+        $this->imageUrlBuilder = $imageUrlBuilder;
         $this->warrantyConfigHelper = $warrantyConfigHelper;
     }
 
@@ -128,5 +145,67 @@ class Container extends View
     public function getPublicToken()
     {
         return $this->warrantyConfigHelper->getPublicToken();
+    }
+
+    /**
+     * @param $product
+     * @return string
+     */
+    public function getProductDescription()
+    {
+        $product = $this->getProduct();
+        $description = $product->getMetaDescription() ? $product->getMetaDescription() : $product->getDescription();
+        $description = $this->stripTags($product->getDescription()); // Strip HTML tags
+        $description = str_replace(["\r", "\n"], '', $description); // Remove new lines
+
+        return $this->string->substr($description, 0, 255);
+    }
+
+    /**
+     * Retrieve product gallery URLs
+     *
+     * @return Collection
+     */
+    public function getGalleryImagesInfo()
+    {
+        $result = [];
+        $product = $this->getProduct();
+        $images = $product->getMediaGalleryImages();
+        if (!$images instanceof \Magento\Framework\Data\Collection) {
+            return $images;
+        }
+
+        foreach ($images as $image) {
+            $image->setData(
+                'image_url',
+                $this->imageUrlBuilder->getUrl($image->getFile(), 'product_page_image_large')
+            );
+        }
+
+        foreach ($images as $image) {
+            $result[] = ['src' => $image->getImageUrl()];
+        }
+
+        return json_encode($result);
+    }
+
+    /**
+     * Return breadcrumbs information, if the "Use Categories Path for Product URLs" setting is enabled.
+     */
+    public function getBreadcrumbsInfo()
+    {
+        $breacrumbs = $this->catalogHelper->getBreadcrumbPath();
+        $result = [];
+
+        foreach ($breacrumbs as $key => $crumb) {
+            if ($isCategory = $this->string->strpos($key, 'category') === 0) {
+                $result[] = [
+                    'category' => $crumb['label'],
+                    'url' => $crumb['link'],
+                ];
+            }
+        }
+
+        return json_encode($result);
     }
 }
