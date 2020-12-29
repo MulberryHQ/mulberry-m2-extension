@@ -17,8 +17,12 @@ define([
     'use strict';
 
     $.widget('mulberry.productPage', {
-        productUpdateTimer: null,
-        mulberryProductUpdateDelay: 1000,
+        options: {
+            productUpdateTimer: null,
+            mulberryProductUpdateDelay: 1000,
+            swatchElement: '[data-role=swatch-options]',
+            swatchAttributeElement: 'div.swatch-attribute'
+        },
 
         _create: function () {
             mulberry.loadLibrary();
@@ -61,7 +65,7 @@ define([
         registerOffers: function registerOffers() {
             var self = this;
 
-            window.mulberry.core.getWarrantyOffer(window.mulberryProductData.product)
+            window.mulberry.core.getWarrantyOffer(window.mulberryProductData.activeSelection)
                 .then(function (offers) {
                     if (offers.length) {
                         var settings = window.mulberry.core.settings;
@@ -69,7 +73,13 @@ define([
                         if (settings.has_modal) {
                             window.mulberry.modal.init({
                                 offers,
-                                settings
+                                settings,
+                                onWarrantyDecline: function () {
+                                    $(self.element).trigger('onWarrantyDecline');
+                                },
+                                onWarrantySelect: function (warranty) {
+                                    $(self.element).trigger('onWarrantySelect', warranty);
+                                }
                             });
                         }
 
@@ -122,13 +132,75 @@ define([
         },
 
         /**
+         * Retrieve selected simple product SKU if configurable swatches are used
+         */
+        getSelectedSwatchProduct: function getSelectedSwatchProduct()
+        {
+            var selectedOptions = {};
+            var options = $(this.options.swatchAttributeElement);
+
+            options.each((index, value) => {
+                let attributeId = $(value).attr('data-attribute-id');
+                let optionSelected = $(value).attr('data-option-selected');
+
+                /**
+                 * Return, if there's no selection
+                 */
+                if (!attributeId || !optionSelected) {
+                    return '';
+                }
+
+                selectedOptions[attributeId] = optionSelected;
+            });
+
+            var swatchConfig = $(this.options.swatchElement).data('mageSwatchRenderer').options.jsonConfig;
+
+            for (var [productId, attributes] of Object.entries(swatchConfig.index)) {
+                if (_.isEqual(attributes, selectedOptions)) {
+                    return swatchConfig.simple_skus[productId];
+                }
+            }
+        },
+
+        /**
          * Prepare selected product SKU for Mulberry API
          */
         prepareSimpleSku: function prepareSimpleSku()
         {
+            /**
+             * Retrieve simple SKU, if the Magento swatch attributes are used
+             *
+             * @type {*|Window.jQuery}
+             */
+            var swatchData = $(this.options.swatchElement).data('mageSwatchRenderer');
+
+            if (swatchData) {
+                var selectedSku = this.getSelectedSwatchProduct();
+
+                if (selectedSku) {
+                    return selectedSku;
+                }
+            }
+
+            /**
+             * Retrieve simple SKU, if the default configurable attributes are used
+             *
+             * @type {*|Window.jQuery}
+             */
             var configurableData = $(this.element).data('mageConfigurable');
 
-            return configurableData ? configurableData.options.spConfig.simple_skus[configurableData.simpleProduct] : $(this.element).data('productSku');
+            if (configurableData) {
+                var selectedSku = configurableData.options.spConfig.simple_skus[configurableData.simpleProduct];
+
+                if (selectedSku) {
+                    return selectedSku;
+                }
+            }
+
+            /**
+             * Fallback to the default SKU
+             */
+            return $(this.element).data('productSku');
         },
 
         /**
@@ -163,7 +235,7 @@ define([
          */
         prepareMulberryProduct: function prepareMulberryProduct(newPrice)
         {
-            var sku = this.prepareSimpleSku() ? this.prepareSimpleSku() : window.mulberryProductData.originalSku,
+            var sku = this.prepareSimpleSku() ? this.prepareSimpleSku() : window.mulberryProductData.activeSelection.sku,
                 customOptionsSku = this.prepareOptionsSku();
 
             if (customOptionsSku !== '') {
@@ -185,8 +257,8 @@ define([
          */
         updateMulberryProduct: function updateMulberryProduct(newPrice)
         {
-            var newConfig = this.prepareMulberryProduct(newPrice),
-                settings = window.mulberry.core.settings;
+            this.prepareMulberryProduct(newPrice);
+            var settings = window.mulberry.core.settings;
 
             if (!window.mulberry || !settings.has_modal || !settings.has_inline) {
                 return;
@@ -197,27 +269,32 @@ define([
              *
              * @type {number}
              */
-            clearTimeout(this.productUpdateTimer);
-            this.productUpdateTimer = setTimeout(function () {
+            clearTimeout(this.options.productUpdateTimer);
+            this.options.productUpdateTimer = setTimeout(function () {
+                if (this.hasConfigurationChanges()) {
+                    window.mulberry.core.getWarrantyOffer(window.mulberryProductData.activeSelection);
 
-                if (this.hasConfigurationChanges(newConfig)) {
-                    window.mulberry.core.getWarrantyOffer(window.mulberryProductData.product);
-
-                    window.mulberryProductData.product = newConfig;
-                    $('#warranty').attr('name', 'warranty[' + window.mulberryProductData.product.id + ']');
+                    $('#warranty').attr('name', 'warranty[' + window.mulberryProductData.activeSelection.id + ']');
                 }
-            }.bind(this), this.mulberryProductUpdateDelay);
+            }.bind(this), this.options.mulberryProductUpdateDelay);
         },
 
         /**
          * Check, if product has configuration changes and we need to trigger Mulberry product update
          *
-         * @param newConfig
          * @returns {boolean}
          */
-        hasConfigurationChanges: function hasConfigurationChanges(newConfig)
+        hasConfigurationChanges: function hasConfigurationChanges()
         {
-            var currentConfig = window.mulberryProductData.product;
+            /**
+             * Make a copy of the new object rather than variable assignment,
+             * this is required to avoid the issue when the currentConfig is updated along with the newConfig value
+             * @type {any}
+             */
+            var newConfig = JSON.parse(JSON.stringify(window.mulberryProductData.product));
+            var currentConfig = window.mulberryProductData.activeSelection;
+
+            window.mulberryProductData.activeSelection = newConfig;
 
             return !_.isEqual(currentConfig, newConfig);
         },

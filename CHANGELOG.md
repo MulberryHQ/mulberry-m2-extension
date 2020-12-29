@@ -5,6 +5,8 @@ Mulberry_Warranty changelog
 - Fixed content parse for the product "description" field
 - Added product URL, breadcrumbs & images to the window.mulberryProductData.product variable
 - Added "modal" check in the add-to-cart mixin
+- "Add to cart" rework for the modal window
+- Fixed SKU selection when the configurable swatches are used
 
 1.0.1:
 - Fixed typo in README installation instructions

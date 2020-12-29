@@ -40,7 +40,7 @@ define([
         targetModule.prototype.addMulberryListeners = function () {
             var self = this;
 
-            window.mulberry.modal.onWarrantySelect = function (warranty) {
+            this.element.on('onWarrantySelect', function (evt, warranty) {
                 if (!self.isCartButtonDisabled()) {
                     self.toggleMulberryWarranty(warranty, true);
 
@@ -53,15 +53,15 @@ define([
                      */
                     self.getMulberryWarrantyElement().val('');
                 }
-            };
+            }.bind(this));
 
-            window.mulberry.modal.onWarrantyDecline = function () {
+            this.element.on('onWarrantyDecline', function (evt, params) {
                 if (!self.isCartButtonDisabled()) {
                     window.mulberry.modal.close();
                     self.element.submit();
                     self.options.mulberryOverlayActive = false;
                 }
-            };
+            }.bind(this));
         };
 
         /**

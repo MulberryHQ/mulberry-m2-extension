@@ -41,9 +41,17 @@
                 },
                 description: "<?= $block->escapeHtml($block->getProductDescription()); ?>"
             },
-            originalSku: "<?= $block->escapeHtml($product->getSku()); ?>",
-            originalPrice: <?= (float)$product->getFinalPrice(); ?>,
-            originalDescription: "<?= $block->escapeHtml($block->getProductDescription()); ?>"
+            activeSelection: {
+                id: "<?= $block->escapeHtml($product->getSku()); ?>",
+                title: "<?= $block->escapeHtml($block->escapeQuote($product->getName())); ?>",
+                price: <?= (float)$product->getFinalPrice(); ?>,
+                url: "<?= $block->escapeUrl($product->getProductUrl()) ?>",
+                images: <?= $block->getGalleryImagesInfo(); ?>,
+                meta: {
+                    breadcrumbs: <?= $block->getBreadcrumbsInfo(); ?>,
+                },
+                description: "<?= $block->escapeHtml($block->getProductDescription()); ?>"
+            }
         };
 
         window.mulberryConfigData = {
