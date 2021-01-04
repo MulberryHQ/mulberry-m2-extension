@@ -6,10 +6,13 @@ The Mulberry Warranty extension allows the addition of an additional warranty pr
 
 ### Composer installation:
 
-1. Add module repository to your composer repositories
-2. Run `composer require getmulberry/mulberry-m2-extension`
-3. Run `./bin/magento setup:upgrade` command
+Run the following commands:
 
+```
+composer config repositories.getmulberry/mulberry-m2-extension git https://github.com/MulberryHQ/mulberry-m2-extension.git
+composer require getmulberry/mulberry-m2-extension
+bin/magento setup:upgrade
+```
 
 ### Module uninstall:
 
