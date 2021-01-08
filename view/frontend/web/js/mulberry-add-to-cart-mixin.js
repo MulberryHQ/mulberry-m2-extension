@@ -76,10 +76,23 @@ define([
         };
 
         targetModule.prototype._create = wrapper.wrap(create, function (original) {
-            if (window.mulberry?.modal) {
-                this.addMulberryListeners();
-                this.options.mulberryOverlayActive = false;
-            }
+            var self = this,
+                counter = 0,
+                initListeners = function() {
+                    if (window.mulberry?.modal) {
+                      self.addMulberryListeners();
+                      self.options.mulberryOverlayActive = false;
+                    } else {
+                        if (counter <= 10) {
+                            counter++;
+                            setTimeout(function() {
+                                initListeners();
+                            }.bind(this), 500);
+                        }
+                    }
+                };
+
+            initListeners();
 
             return original();
         });

@@ -272,7 +272,17 @@ define([
             clearTimeout(this.options.productUpdateTimer);
             this.options.productUpdateTimer = setTimeout(function () {
                 if (this.hasConfigurationChanges()) {
-                    window.mulberry.core.getWarrantyOffer(window.mulberryProductData.activeSelection);
+                    window.mulberry.core.getWarrantyOffer(window.mulberryProductData.activeSelection).then(function (offers) {
+                        var settings = window.mulberry.core.settings;
+
+                        if (settings.has_modal) {
+                            window.mulberry.modal.updateOffer(window.mulberry.core.offers);
+                        }
+
+                        if (settings.has_inline) {
+                            window.mulberry.inline.updateOffer(window.mulberry.core.offers);
+                        }
+                    });
 
                     $('#warranty').attr('name', 'warranty[' + window.mulberryProductData.activeSelection.id + ']');
                 }
