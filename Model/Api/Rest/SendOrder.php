@@ -17,6 +17,7 @@ use Magento\Sales\Model\Order\Item;
 use Magento\Directory\Model\CountryFactory;
 use Mulberry\Warranty\Api\Config\HelperInterface;
 use Mulberry\Warranty\Model\Product\Type;
+use Mulberry\Warranty\Model\Queue;
 
 class SendOrder implements SendOrderServiceInterface
 {
@@ -187,6 +188,6 @@ class SendOrder implements SendOrderServiceInterface
      */
     private function parseResponse($response)
     {
-        return [];
+        return ['status' => Queue::STATUS_SYNCED, 'response' => $response];
     }
 }

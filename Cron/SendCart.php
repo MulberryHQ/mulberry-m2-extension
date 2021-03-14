@@ -12,7 +12,7 @@ namespace Mulberry\Warranty\Cron;
 
 use Mulberry\Warranty\Api\QueueProcessorInterface;
 use Mulberry\Warranty\Model\Processor\Queue;
-use Psr\Log\Log\LoggerInterface;
+use Psr\Log\LoggerInterface;
 use Magento\Framework\Event\Observer;
 use Magento\Sales\Model\Order;
 use Mulberry\Warranty\Api\Rest\SendOrderServiceInterface;
@@ -51,9 +51,9 @@ class SendCart
     /**
      * @param Observer $observer
      */
-    public function execute(Observer $observer)
+    public function execute()
     {
-        $collection = $this->queueProcessor->getOrdersToExport();
+        $collection = $this->queueProcessor->getCartsToExport();
         $collection->setPageSize(self::BATCH_SIZE)
             ->setCurPage(1);
 

@@ -95,7 +95,7 @@ class Queue implements QueueProcessorInterface
     /**
      * @inheritdoc
      */
-    public function orderHasWarrantyItems(OrderInterface $order) : bool
+    public function orderHasWarrantyItems(OrderInterface $order): bool
     {
         foreach ($order->getAllItems() as $item) {
             if ($item->getProductType() === Type::TYPE_ID) {
@@ -109,13 +109,13 @@ class Queue implements QueueProcessorInterface
     /**
      * @inheritdoc
      */
-    public function process(OrderInterface $order, $actionType) : bool
+    public function process(OrderInterface $order, $actionType): bool
     {
         $result = false;
         /**
          * @var $queue QueueModel
          */
-        $queue = $this->queueRepository->getByOrderIdAndActionType($order->getEntityId(), $actionType);
+        $queue = $this->queueRepository->getByOrderIdAndActionType($order->getId(), $actionType);
 
         if ($queue->getId()) {
             switch ($actionType) {
@@ -141,7 +141,7 @@ class Queue implements QueueProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getOrdersToExport() : OrderCollection
+    public function getOrdersToExport(): OrderCollection
     {
         $collection = $this->getOrderCollection();
         $this->addSyncStatusFilter($collection, null);
@@ -153,7 +153,7 @@ class Queue implements QueueProcessorInterface
     /**
      * @inheritdoc
      */
-    public function getCartsToExport() : OrderCollection
+    public function getCartsToExport(): OrderCollection
     {
         $collection = $this->getOrderCollection();
         $this->addSyncStatusFilter($collection, null);
@@ -165,7 +165,7 @@ class Queue implements QueueProcessorInterface
     /**
      * @return OrderCollection
      */
-    private function getOrderCollection() : OrderCollection
+    private function getOrderCollection(): OrderCollection
     {
         $orderCollection = $this->orderCollectionFactory->create();
         $this->joinQueueToOrderCollection($orderCollection);
@@ -180,8 +180,9 @@ class Queue implements QueueProcessorInterface
     private function joinQueueToOrderCollection(OrderCollection $collection)
     {
         $collection->getSelect()->joinLeft(
-            ['mwq' => $this->getMainTable()],
-            'main_table.entity_id = mwq.order_id'
+            ['mwq' => 'mulberry_warranty_queue'],
+            'main_table.entity_id = mwq.order_id',
+            ['action_type', 'sync_status', 'sync_date']
         );
 
         return $this;
@@ -195,7 +196,7 @@ class Queue implements QueueProcessorInterface
     private function addSyncStatusFilter(OrderCollection $collection, $syncstatus)
     {
         $collection->getSelect()->where(
-            'mwq.sync_status = ?',
+            $syncstatus === null ? 'mwq.sync_status IS NULL' : 'mwq.sync_status = ?',
             $syncstatus
         );
 
