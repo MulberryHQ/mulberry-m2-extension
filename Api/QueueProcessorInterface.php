@@ -11,7 +11,6 @@ namespace Mulberry\Warranty\Api;
 
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
-use Magento\Tests\NamingConvention\true\bool;
 use Mulberry\Warranty\Api\Data\QueueInterface;
 
 interface QueueProcessorInterface

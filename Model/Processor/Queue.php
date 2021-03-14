@@ -86,7 +86,7 @@ class Queue implements QueueProcessorInterface
          * @var $queueModel QueueModel
          */
         $queueModel = $this->queueFactory->create();
-        $queueModel->setOrderId($order->getEntityId());
+        $queueModel->setOrderId($order->getId());
         $queueModel->setActionType($type);
 
         $this->queueRepository->save($queueModel);
@@ -95,7 +95,7 @@ class Queue implements QueueProcessorInterface
     /**
      * @inheritdoc
      */
-    public function orderHasWarrantyItems(OrderInterface $order)
+    public function orderHasWarrantyItems(OrderInterface $order) : bool
     {
         foreach ($order->getAllItems() as $item) {
             if ($item->getProductType() === Type::TYPE_ID) {

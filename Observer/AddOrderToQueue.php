@@ -24,11 +24,6 @@ class AddOrderToQueue implements ObserverInterface
     private $configHelper;
 
     /**
-     * @var SendCartServiceInterface $orderSendService
-     */
-    private $orderSendService;
-
-    /**
      * @var QueueProcessorInterface $queueProcessor
      */
     private $queueProcessor;
@@ -37,16 +32,13 @@ class AddOrderToQueue implements ObserverInterface
      * SendCart constructor.
      *
      * @param HelperInterface $configHelper
-     * @param SendCartServiceInterface $orderSendService
      * @param QueueProcessorInterface $queueProcessor
      */
     public function __construct(
         HelperInterface $configHelper,
-        SendCartServiceInterface $orderSendService,
         QueueProcessorInterface $queueProcessor
     ) {
         $this->configHelper = $configHelper;
-        $this->orderSendService = $orderSendService;
         $this->queueProcessor = $queueProcessor;
     }
 
