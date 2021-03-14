@@ -16,8 +16,7 @@
         <observer name="set_warranty_product_name" instance="Mulberry\Warranty\Observer\SetWarrantyProductName"/>
     </event>
     <event name="checkout_submit_all_after">
-        <observer name="mulberry_send_order_information" instance="Mulberry\Warranty\Observer\SendOrder"/>
-        <observer name="mulberry_send_cart_information" instance="Mulberry\Warranty\Observer\SendCart"/>
+        <observer name="mulberry_add_order_to_queue" instance="Mulberry\Warranty\Observer\AddOrderToQueue"/>
     </event>
     <event name="order_cancel_after">
         <observer name="mulberry_cancel_order" instance="Mulberry\Warranty\Observer\CancelOrder"/>
