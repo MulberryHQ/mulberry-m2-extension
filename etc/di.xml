@@ -19,6 +19,9 @@
     <preference for="Mulberry\Warranty\Api\Rest\CancelOrderServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\CancelOrder"/>
     <preference for="Mulberry\Warranty\Api\Rest\GetPersonalizedWarrantyServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\GetPersonalizedWarranty"/>
     <preference for="Magento\Catalog\Block\Product\View\Options" type="Mulberry\Warranty\Block\Product\View\Options"/>
+    <preference for="Mulberry\Warranty\Api\QueueRepositoryInterface" type="Mulberry\Warranty\Model\QueueRepository"/>
+    <preference for="Mulberry\Warranty\Api\Data\QueueInterface" type="Mulberry\Warranty\Model\Data\Queue"/>
+    <preference for="Mulberry\Warranty\Api\QueueProcessorInterface" type="Mulberry\Warranty\Model\Processor\Queue"/>
 
     <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
         <plugin name="MulberryConfigurableProductExtend" type="Mulberry\Warranty\Plugin\ConfigurablePlugin"/>
@@ -29,6 +32,41 @@
         <arguments>
             <argument name="columns" xsi:type="array">
                 <item name="order_identifier" xsi:type="string">sales_order.order_identifier</item>
+            </argument>
+        </arguments>
+    </virtualType>
+
+    <!-- Custom Logger -->
+    <type name="Mulberry\Warranty\Cron\SendCart">
+        <arguments>
+            <argument name="logger" xsi:type="object">Mulberry\Warranty\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="Mulberry\Warranty\Cron\SendOrder">
+        <arguments>
+            <argument name="logger" xsi:type="object">Mulberry\Warranty\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="Mulberry\Warranty\Model\Api\Rest\Service">
+        <arguments>
+            <argument name="logger" xsi:type="object">Mulberry\Warranty\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+    <type name="Mulberry\Warranty\Model\Processor\Queue">
+        <arguments>
+            <argument name="logger" xsi:type="object">Mulberry\Warranty\Logger\VirtualLogger</argument>
+        </arguments>
+    </type>
+
+    <virtualType name="Mulberry\Warranty\Logger\Handler\VirtualHandler" type="Magento\Framework\Logger\Handler\Base">
+        <arguments>
+            <argument name="fileName" xsi:type="string">/var/log/mulberry_warranty.log</argument>
+        </arguments>
+    </virtualType>
+    <virtualType name="Mulberry\Warranty\Logger\VirtualLogger" type="Magento\Framework\Logger\Monolog">
+        <arguments>
+            <argument name="handlers" xsi:type="array">
+                <item name="system" xsi:type="object">Mulberry\Warranty\Logger\Handler\VirtualHandler</item>
             </argument>
         </arguments>
     </virtualType>

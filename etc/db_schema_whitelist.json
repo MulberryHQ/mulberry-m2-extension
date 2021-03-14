@@ -1,0 +1,26 @@
+{
+    "sales_order": {
+        "column": {
+            "order_identifier": true
+        }
+    },
+    "sales_order_grid": {
+        "column": {
+            "order_identifier": true
+        }
+    },
+    "mulberry_queue": {
+        "column": {
+            "order_id": true,
+            "action_type": true,
+            "sync_status": true,
+            "sync_date": true
+        },
+        "index": {
+            "MULBERRY_QUEUE_ORDER_ID": true
+        },
+        "constraint": {
+            "MULBERRY_QUEUE_ORDER_ID_SALES_ORDER_ENTITY_ID": true
+        }
+    }
+}

@@ -1,6 +1,11 @@
 Mulberry_Warranty changelog
 ========================
 
+1.1.0:
+- Fixed "Undefined index" issue when adding product to the shopping cart, because the response payload is now different
+- Added functionality to send order + post purchase (cart) actions async via cronjob
+- Added custom Mulberry logger
+
 1.0.2:
 - Fixed content parse for the product "description" field
 - Added product URL, breadcrumbs & images to the window.mulberryProductData.product variable

@@ -1,0 +1,40 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Mulberry <support@getmulberry.com>
+ * @copyright Copyright (c) 2021 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+-->
+<schema xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:framework:Setup/Declaration/Schema/etc/schema.xsd">
+    <table name="sales_order">
+        <!-- Migrated from UpgradeSchema.php -->
+        <column xsi:type="varchar" name="order_identifier" nullable="true" length="255" comment="Mulberry Order Identifier"/>
+    </table>
+
+    <!-- Migrated from UpgradeSchema.php -->
+    <table name="sales_order_grid">
+        <column xsi:type="varchar" name="order_identifier" nullable="true" length="255" comment="Mulberry Order Identifier"/>
+    </table>
+
+    <table name="mulberry_warranty_queue" resource="sales" engine="innodb" comment="Mulberry Warranty Processing Queue">
+        <column xsi:type="smallint" name="entity_id" padding="6" unsigned="true" nullable="false" identity="true" comment="Entity Id"/>
+        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false" default="0" comment="Order ID"/>
+        <column xsi:type="varchar" name="action_type" nullable="true" length="32" comment="Export Action Type"/>
+        <column xsi:type="varchar" name="sync_status" nullable="true" length="32" comment="Mulberry Order Sync Status"/>
+        <column xsi:type="timestamp" name="sync_date" on_update="false" nullable="true" comment="Mulberry Order Sync Date"/>
+
+        <constraint xsi:type="primary" referenceId="PRIMARY">
+            <column name="entity_id"/>
+        </constraint>
+        <constraint xsi:type="foreign" referenceId="MULBERRY_WARRANTY_QUEUE_ORDER_ID_SALES_ORDER_ENTITY_ID" table="mulberry_warranty_queue"
+                    column="order_id" referenceTable="sales_order" referenceColumn="entity_id" onDelete="CASCADE"/>
+
+        <index referenceId="MULBERRY_WARRANTY_QUEUE_ORDER_ID" indexType="btree">
+            <column name="order_id"/>
+        </index>
+    </table>
+</schema>
