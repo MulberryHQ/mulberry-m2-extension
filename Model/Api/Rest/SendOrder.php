@@ -11,12 +11,14 @@ namespace Mulberry\Warranty\Model\Api\Rest;
 
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Address;
+use Mulberry\Warranty\Api\Data\QueueInterface;
 use Mulberry\Warranty\Api\Rest\ServiceInterface;
 use Mulberry\Warranty\Api\Rest\SendOrderServiceInterface;
 use Magento\Sales\Model\Order\Item;
 use Magento\Directory\Model\CountryFactory;
 use Mulberry\Warranty\Api\Config\HelperInterface;
 use Mulberry\Warranty\Model\Product\Type;
+use Mulberry\Warranty\Model\Queue;
 
 class SendOrder implements SendOrderServiceInterface
 {
@@ -92,7 +94,10 @@ class SendOrder implements SendOrderServiceInterface
         $this->prepareItemsPayload();
 
         if (!$this->orderHasWarrantyProducts) {
-            return [];
+            return [
+                'status' => QueueInterface::STATUS_SKIPPED,
+                'response' => __('Order "#%1" does not have warranty items.', $order->getIncrementId())
+            ];
         }
 
         $payload = $this->getOrderPayload();
@@ -187,6 +192,9 @@ class SendOrder implements SendOrderServiceInterface
      */
     private function parseResponse($response)
     {
-        return [];
+        return [
+            'status' => $response['is_successful'] ? QueueInterface::STATUS_SYNCED : QueueInterface::STATUS_FAILED,
+            'response' => $response
+        ];
     }
 }

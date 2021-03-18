@@ -1,0 +1,21 @@
+<?xml version="1.0" ?>
+<!--
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Mulberry <support@getmulberry.com>
+ * @copyright Copyright (c) 2021 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+-->
+<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:noNamespaceSchemaLocation="urn:magento:module:Magento_Cron:etc/crontab.xsd">
+    <group id="mulberry">
+        <job name="mulberry_warranty_send_order" instance="Mulberry\Warranty\Cron\SendOrder" method="execute">
+            <schedule>* * * * *</schedule>
+        </job>
+        <job name="mulberry_warranty_send_cart" instance="Mulberry\Warranty\Cron\SendCart" method="execute">
+            <schedule>5 * * * *</schedule>
+        </job>
+    </group>
+</config>

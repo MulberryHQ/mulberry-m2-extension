@@ -70,7 +70,7 @@ class Warranty implements WarrantyServiceInterface
         /**
          * Warranty product information is stored in $response[0][0]
          */
-        $warrantyProduct = (is_array($response) && isset($response['result'][0][0])) ? $response['result'][0][0] : [];
+        $warrantyProduct = (is_array($response) && isset($response['result'])) ? $response['result'] : [];
 
         if (!empty($warrantyProduct) && $this->validateWarrantyProductResponse($warrantyProduct)) {
             $result = [

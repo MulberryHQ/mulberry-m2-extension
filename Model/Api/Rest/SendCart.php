@@ -11,12 +11,14 @@ namespace Mulberry\Warranty\Model\Api\Rest;
 
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Address;
+use Mulberry\Warranty\Api\Data\QueueInterface;
 use Mulberry\Warranty\Api\Rest\SendCartServiceInterface;
 use Mulberry\Warranty\Api\Rest\ServiceInterface;
 use Magento\Sales\Model\Order\Item;
 use Magento\Directory\Model\CountryFactory;
 use Mulberry\Warranty\Api\Config\HelperInterface;
 use Mulberry\Warranty\Model\Product\Type;
+use Mulberry\Warranty\Model\Queue;
 
 class SendCart implements SendCartServiceInterface
 {
@@ -52,8 +54,11 @@ class SendCart implements SendCartServiceInterface
      * @param HelperInterface $configHelper
      * @param CountryFactory $countryFactory
      */
-    public function __construct(ServiceInterface $service, HelperInterface $configHelper, CountryFactory $countryFactory)
-    {
+    public function __construct(
+        ServiceInterface $service,
+        HelperInterface $configHelper,
+        CountryFactory $countryFactory
+    ) {
         $this->service = $service;
         $this->configHelper = $configHelper;
         $this->countryFactory = $countryFactory;
@@ -148,7 +153,7 @@ class SendCart implements SendCartServiceInterface
      */
     private function prepareItemPayload(Item $item)
     {
-        for ($i = 0; $i < (int) $item->getQtyOrdered(); $i++) {
+        for ($i = 0; $i < (int)$item->getQtyOrdered(); $i++) {
             $this->itemsPayload[] = [
                 'product_id' => $item->getSku(),
                 'product_price' => $item->getPrice(),
@@ -164,6 +169,9 @@ class SendCart implements SendCartServiceInterface
      */
     private function parseResponse($response)
     {
-        return [];
+        return [
+            'status' => $response['is_successful'] ? QueueInterface::STATUS_SYNCED : QueueInterface::STATUS_FAILED,
+            'response' => $response
+        ];
     }
 }
