@@ -1,6 +1,10 @@
 Mulberry_Warranty changelog
 ========================
 
+1.2.0:
+- Added ability to crawl catalog and collect following product data: title, description, price, url, image urls, category urls
+- Added ability to download generated json
+
 1.1.0:
 - Fixed "Undefined index" issue when adding product to the shopping cart, because the response payload is now different
 - Added functionality to send order + post purchase (cart) actions async via cronjob

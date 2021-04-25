@@ -1,0 +1,139 @@
+<?php
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Mulberry <support@getmulberry.com>
+ * @copyright Copyright (c) 2021 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+?>
+
+<?php use Mulberry\Warranty\Block\System\Config\GenerateAndDownload; ?>
+
+<?php /* @var $block GenerateAndDownload */ ?>
+
+<div class="generate-and-download-wrapper">
+    <?php echo $block->getGenerateAndDownloadButtonHtml() ?>
+    <span class="generate-and-download-indicator" id="generate_and_download_span">
+        <img class="generate_processing" hidden="hidden" alt="Generating" style="margin:0 5px" src="<?php echo $block->getViewFileUrl('images/process_spinner.gif') ?>"/>
+        <img class="generate_collected" hidden="hidden" alt="Downloading" style="margin:-3px 5px" src="<?php echo $block->getViewFileUrl('images/rule_component_apply.gif') ?>"/>
+        <span id="generate_and_download_message_span"></span>
+    </span>
+</div>
+
+<div class="download-wrapper">
+    <?php echo $block->getDownloadButtonHtml() ?>
+    <span class="download-indicator" id="download_span">
+        <img class="download_processing" hidden="hidden" alt="Generating" style="margin:0 5px" src="<?php echo $block->getViewFileUrl('images/process_spinner.gif') ?>"/>
+        <img class="download_collected" hidden="hidden" alt="Downloading" style="margin:-3px 5px" src="<?php echo $block->getViewFileUrl('images/rule_component_apply.gif') ?>"/>
+        <span id="download_message_span"></span>
+    </span>
+</div>
+
+<script>
+  function download(filename, text) {
+    var element = document.createElement('a');
+    element.setAttribute('href', 'data:text/plain;charset=utf-8,' + encodeURIComponent(text));
+    element.setAttribute('download', filename);
+
+    element.style.display = 'none';
+    document.body.appendChild(element);
+
+    element.click();
+
+    document.body.removeChild(element);
+  }
+
+  require([
+    'jquery',
+    'prototype'
+  ], function(jQuery){
+
+    var generateSpan = jQuery('#generate_and_download_span');
+    var downloadSpan = jQuery('#download_span');
+
+    jQuery('#generate_and_download_button').click(function () {
+      var messageSpan = jQuery('#generate_and_download_message_span');
+      var currentPage = 1;
+      var lastPage = 1;
+      var data = [];
+      var continueProcessing = true;
+      generateSpan.find('.generate_collected').hide();
+      generateSpan.find('.generate_processing').show();
+      do {
+        var params = { page: currentPage }
+        currentPage++;
+        generateSpan.find('#generate_and_download_message_span').text('Processing ' + currentPage + ' of' + lastPage);
+        new Ajax.Request('<?php echo $block->getGenerateAndDownloadAjaxUrl() ?>', {
+          parameters: params,
+          loaderArea: false,
+          asynchronous: false,
+          onCreate: function () {
+            generateSpan.find('#generate_and_download_message_span').text('Processing ' + currentPage + ' of' + lastPage);
+          },
+          onSuccess: function (response) {
+            var resultText = '';
+            if (response.status > 200) {
+              resultText = response.statusText;
+            } else {
+              resultText = 'Success';
+              generateSpan.find('.generate_collected').show();
+            }
+            messageSpan.text(resultText);
+
+            var json = response.responseJSON;
+            lastPage = json.lastPage;
+            json.content.each(function (value) {
+              data.push(value);
+            });
+          },
+          onFail: function () {
+            continueProcessing = false;
+          }
+        });
+      } while ((currentPage <= lastPage) && continueProcessing);
+      generateSpan.find('.generate_processing').hide();
+
+      if (data && continueProcessing) {
+        download('data.json', JSON.stringify(data));
+      } else {
+        messageSpan.text('Something went wrong, please try again');
+      }
+    });
+    jQuery('#download_button').click(function () {
+      var params = {};
+      var messageSpan = jQuery('#download_message_span');
+      new Ajax.Request('<?php echo $block->getDownloadAjaxUrl() ?>', {
+        parameters:     params,
+        loaderArea:     false,
+        asynchronous:   true,
+        onCreate: function() {
+          downloadSpan.find('.download_collected').hide();
+          downloadSpan.find('.download_processing').show();
+          jQuery('#download_message_span').text('');
+        },
+        onSuccess: function(response) {
+          downloadSpan.find('.download_processing').hide();
+
+          var resultText = '';
+          if (response.status > 200) {
+            resultText = response.statusText;
+          } else {
+            resultText = 'Success. Download will start in a moment';
+            downloadSpan.find('.download_collected').show();
+          }
+          messageSpan.text(resultText);
+
+          var json = response.responseJSON;
+          console.log(json);
+          if (typeof json.content != 'undefined' && json.content !== '') {
+            download('data.json', JSON.stringify(json.content));
+          } else {
+            messageSpan.text('Could not find data file');
+          }
+        }
+      });
+    });
+
+  });
+</script>
