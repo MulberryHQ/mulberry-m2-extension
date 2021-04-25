@@ -78,6 +78,13 @@
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
+
+            <group id="actions" translate="label" type="text" sortOrder="10" showInDefault="1" showInWebsite="0" showInStore="0">
+                <label>Actions</label>
+                <field id="generate_and_download" translate="Generate and download action" type="button" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <frontend_model>Mulberry\Warranty\Block\System\Config\GenerateAndDownload</frontend_model>
+                </field>
+            </group>
         </section>
     </system>
 </config>

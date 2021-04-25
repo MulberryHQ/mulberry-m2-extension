@@ -12,7 +12,7 @@
     <acl>
         <resources>
             <resource id="Magento_Backend::admin">
-                <resource id="Mulberry_Warranty::mulberry_warranty" title="Happysocks Navision All" translate="title" sortOrder="100"/>
+                <resource id="Mulberry_Warranty::mulberry_warranty" title="Mulberry Warranty Resource" translate="title" sortOrder="100"/>
             </resource>
         </resources>
     </acl>
