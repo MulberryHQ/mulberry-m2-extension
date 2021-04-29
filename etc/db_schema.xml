@@ -22,7 +22,7 @@
 
     <table name="mulberry_warranty_queue" resource="sales" engine="innodb" comment="Mulberry Warranty Processing Queue">
         <column xsi:type="smallint" name="entity_id" padding="6" unsigned="true" nullable="false" identity="true" comment="Entity Id"/>
-        <column xsi:type="int" name="order_id" unsigned="true" nullable="false" identity="false" default="0" comment="Order ID"/>
+        <column xsi:type="int" name="order_id" padding="10" unsigned="true" nullable="false" identity="false" comment="Order Id"/>
         <column xsi:type="varchar" name="action_type" nullable="true" length="32" comment="Export Action Type"/>
         <column xsi:type="varchar" name="sync_status" nullable="true" length="32" comment="Mulberry Order Sync Status"/>
         <column xsi:type="timestamp" name="sync_date" on_update="false" nullable="true" comment="Mulberry Order Sync Date"/>
