@@ -20,7 +20,6 @@ define([
          * @private
          */
         loadLibrary: function () {
-            $('body').trigger('processStart');
 
             var element = document.createElement('script'),
                 scriptTag = document.getElementsByTagName('script')[0],
@@ -34,7 +33,6 @@ define([
                     window.mulberry = lib;
                 });
 
-                $('body').trigger('processStop');
             };
 
             scriptTag.parentNode.insertBefore(element, scriptTag);
