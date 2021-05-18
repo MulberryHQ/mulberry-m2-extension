@@ -125,7 +125,7 @@
           messageSpan.text(resultText);
 
           var json = response.responseJSON;
-          console.log(json);
+
           if (typeof json.content != 'undefined' && json.content !== '') {
             download('data.json', JSON.stringify(json.content));
           } else {

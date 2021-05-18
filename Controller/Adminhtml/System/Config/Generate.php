@@ -72,7 +72,7 @@ class Generate extends Action
         $result = $this->resultJsonFactory->create();
 
         return $result->setData(
-            ['success' => true, 'content' => $pageData['content'], 'lastPage' => $pageData['lastPage'] - 400]
+            ['success' => true, 'content' => $pageData['content'], 'lastPage' => $pageData['lastPage']]
         );
     }
 
