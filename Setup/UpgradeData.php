@@ -27,6 +27,7 @@ class UpgradeData implements UpgradeDataInterface
      * @var array $warrantyProductSkus
      */
     private $warrantyProductSkus = array(
+        'mulberry-warranty-12-months' => 'Mulberry Warranty Product - 12 Months',
         'mulberry-warranty-24-months' => 'Mulberry Warranty Product - 24 Months',
         'mulberry-warranty-36-months' => 'Mulberry Warranty Product - 36 Months',
         'mulberry-warranty-48-months' => 'Mulberry Warranty Product - 48 Months',
