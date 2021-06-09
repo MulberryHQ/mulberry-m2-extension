@@ -16,7 +16,8 @@ define([
 
     return function (targetModule) {
         var submitForm = targetModule.prototype.submitForm,
-            create = targetModule.prototype._create;
+            create = targetModule.prototype._create,
+            warrantyHash = '#warranty_hash';
 
         /**
          * Retrieve warranty hidden warranty element
@@ -24,7 +25,7 @@ define([
          * @returns {*|jQuery|HTMLElement}
          */
         targetModule.prototype.getMulberryWarrantyElement = function () {
-            return $('#warranty');
+            return $(warrantyHash);
         };
 
         /**

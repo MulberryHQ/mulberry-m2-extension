@@ -21,7 +21,9 @@ define([
             productUpdateTimer: null,
             mulberryProductUpdateDelay: 1000,
             swatchElement: '[data-role=swatch-options]',
-            swatchAttributeElement: 'div.swatch-attribute'
+            swatchAttributeElement: 'div.swatch-attribute',
+            warrantyHashElement: '#warranty_hash',
+            warrantySkuElement: '#warranty_sku',
         },
 
         _create: function () {
@@ -106,14 +108,15 @@ define([
         toggleWarranty: function toggleWarranty(data, isSelected)
         {
             var selectedWarrantyHash = '',
-                warrantyElement = $('#warranty');
+                warrantyHashElement = $(this.options.warrantyHashElement),
+                warrantySkuElement = $(this.options.warrantySkuElement);
 
             if (data) {
                 selectedWarrantyHash = isSelected && data ? data.warranty_hash : '';
             }
 
-            warrantyElement.attr('name', 'warranty[' + window.mulberryProductData.product.id + ']');
-            warrantyElement.val(selectedWarrantyHash);
+            warrantySkuElement.val(window.mulberryProductData.product.id);
+            warrantyHashElement.val(selectedWarrantyHash);
         },
 
         /**
@@ -260,7 +263,7 @@ define([
             this.prepareMulberryProduct(newPrice);
             var settings = window.mulberry.core.settings;
 
-            if (!window.mulberry || !settings.has_modal || !settings.has_inline) {
+            if (!window.mulberry || (!settings.has_modal && !settings.has_inline)) {
                 return;
             }
 
@@ -284,7 +287,7 @@ define([
                         }
                     });
 
-                    $('#warranty').attr('name', 'warranty[' + window.mulberryProductData.activeSelection.id + ']');
+                    $(this.options.warrantySkuElement).val(window.mulberryProductData.activeSelection.id);
                 }
             }.bind(this), this.options.mulberryProductUpdateDelay);
         },

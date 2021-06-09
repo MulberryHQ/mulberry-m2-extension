@@ -121,20 +121,22 @@ class AddWarranty implements ObserverInterface
                 $warrantyProductsToAdd = isset($params['qty']) ? $params['qty'] : 1;
 
                 if (array_key_exists('warranty', $params)) {
+                    $warrantySku = $params['warranty']['sku'];
+                    $isValidWarrantyHash = false;
+
                     /**
                      * Check whether we need to add warranty for this product or not
                      */
-                    if (isset($params['warranty'][$this->getSelectedProductSku($originalProduct)])
-                        && !empty($params['warranty'][$this->getSelectedProductSku($originalProduct)])) {
-                        $warrantyHash = $params['warranty'][$this->getSelectedProductSku($originalProduct)];
-                    } else {
-                        $warrantyHash = false;
+                    if (isset($params['warranty']['hash']) && !empty($params['warranty']['hash']) && $warrantySku === $this->getSelectedProductSku($originalProduct)) {
+                        $isValidWarrantyHash = true;
                     }
 
                     /**
                      * Process additional warranty product add-to-cart
                      */
-                    if ($originalProduct && $originalProduct->getId() && $warrantyHash) {
+                    if ($originalProduct && $originalProduct->getId() && $isValidWarrantyHash) {
+                        $warrantyHash = $params['warranty']['hash'];
+
                         /**
                          * Prepare buyRequest and other options for warranty quote item
                          */
