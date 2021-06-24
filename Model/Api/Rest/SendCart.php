@@ -18,7 +18,8 @@ use Magento\Sales\Model\Order\Item;
 use Magento\Directory\Model\CountryFactory;
 use Mulberry\Warranty\Api\Config\HelperInterface;
 use Mulberry\Warranty\Model\Product\Type;
-use Mulberry\Warranty\Model\Queue;
+use Magento\Store\Model\App\Emulation;
+use Magento\Framework\App\Area;
 
 class SendCart implements SendCartServiceInterface
 {
@@ -48,20 +49,28 @@ class SendCart implements SendCartServiceInterface
     private $countryFactory;
 
     /**
+     * @var Emulation
+     */
+    private $emulation;
+
+    /**
      * SendOrder constructor.
      *
      * @param ServiceInterface $service
      * @param HelperInterface $configHelper
      * @param CountryFactory $countryFactory
+     * @param Emulation $emulation
      */
     public function __construct(
         ServiceInterface $service,
         HelperInterface $configHelper,
-        CountryFactory $countryFactory
+        CountryFactory $countryFactory,
+        Emulation $emulation
     ) {
         $this->service = $service;
         $this->configHelper = $configHelper;
         $this->countryFactory = $countryFactory;
+        $this->emulation = $emulation;
     }
 
     /**
@@ -83,7 +92,9 @@ class SendCart implements SendCartServiceInterface
         $this->prepareItemsPayload();
 
         $payload = $this->getOrderPayload();
+        $this->emulation->startEnvironmentEmulation($this->order->getStoreId(), Area::AREA_FRONTEND, true);
         $response = $this->service->makeRequest(self::CART_SEND_ENDPOINT_URL, $payload, ServiceInterface::POST);
+        $this->emulation->stopEnvironmentEmulation();
 
         return $this->parseResponse($response);
     }

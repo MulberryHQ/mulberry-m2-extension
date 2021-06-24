@@ -9,12 +9,14 @@
 
 namespace Mulberry\Warranty\Model\Api\Rest;
 
+use Magento\Framework\App\Area;
 use Magento\Framework\Stdlib\DateTime\TimezoneInterface;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Item;
 use Mulberry\Warranty\Api\Rest\CancelOrderServiceInterface;
 use Mulberry\Warranty\Api\Rest\ServiceInterface;
 use Mulberry\Warranty\Model\Product\Type;
+use Magento\Store\Model\App\Emulation;
 
 class CancelOrder implements CancelOrderServiceInterface
 {
@@ -44,17 +46,25 @@ class CancelOrder implements CancelOrderServiceInterface
     private $date;
 
     /**
+     * @var Emulation
+     */
+    private $emulation;
+
+    /**
      * SendOrder constructor.
      *
      * @param ServiceInterface $service
      * @param TimezoneInterface $date
+     * @param Emulation $emulation
      */
     public function __construct(
         ServiceInterface $service,
-        TimezoneInterface $date
+        TimezoneInterface $date,
+        Emulation $emulation
     ) {
         $this->service = $service;
         $this->date = $date;
+        $this->emulation = $emulation;
     }
 
     /**
@@ -68,14 +78,15 @@ class CancelOrder implements CancelOrderServiceInterface
     {
         $this->order = $order;
         $this->prepareItemsPayload();
-
         if (!$this->orderHasWarrantyProducts) {
             return [];
         }
 
         $payload = $this->getOrderCancellationPayload();
 
+        $this->emulation->startEnvironmentEmulation($this->order->getStoreId(), Area::AREA_FRONTEND, true);
         $response = $this->service->makeRequest(self::ORDER_CANCEL_ENDPOINT_URL, $payload, ServiceInterface::POST);
+        $this->emulation->stopEnvironmentEmulation();
 
         return $this->parseResponse($response);
     }

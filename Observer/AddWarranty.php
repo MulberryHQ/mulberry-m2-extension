@@ -24,6 +24,7 @@ use Magento\Store\Model\StoreManagerInterface;
 use Mulberry\Warranty\Api\Config\HelperInterface;
 use Mulberry\Warranty\Api\ItemOptionInterface;
 use Mulberry\Warranty\Api\ItemUpdaterInterface as ItemUpdater;
+use Psr\Log\LoggerInterface;
 
 class AddWarranty implements ObserverInterface
 {
@@ -68,6 +69,11 @@ class AddWarranty implements ObserverInterface
     private $itemOptionHelper;
 
     /**
+     * @var LoggerInterface $logger
+     */
+    private $logger;
+
+    /**
      * AddWarranty constructor.
      *
      * @param RequestInterface $request
@@ -78,6 +84,7 @@ class AddWarranty implements ObserverInterface
      * @param ManagerInterface $messageManager
      * @param HelperInterface $helper
      * @param ItemOptionInterface $itemOptionHelper
+     * @param LoggerInterface $logger
      */
     public function __construct(
         RequestInterface $request,
@@ -87,7 +94,8 @@ class AddWarranty implements ObserverInterface
         ProductRepositoryInterface $productRepository,
         ManagerInterface $messageManager,
         HelperInterface $helper,
-        ItemOptionInterface $itemOptionHelper
+        ItemOptionInterface $itemOptionHelper,
+        LoggerInterface $logger
     ) {
         $this->request = $request;
         $this->warrantyItemUpdater = $itemUpdater;
@@ -97,6 +105,7 @@ class AddWarranty implements ObserverInterface
         $this->messageManager = $messageManager;
         $this->helper = $helper;
         $this->itemOptionHelper = $itemOptionHelper;
+        $this->logger = $logger;
     }
 
     /**
@@ -104,6 +113,8 @@ class AddWarranty implements ObserverInterface
      */
     public function execute(Observer $observer)
     {
+        $originalProduct = $observer->getEvent()->getProduct();
+        $warrantyProduct = null;
         try {
             /**
              * Add warranty products equal to the amount of original product added to cart.
@@ -114,7 +125,6 @@ class AddWarranty implements ObserverInterface
                  * @var Quote $quote
                  * @var Quote\Item $originalQuoteItem
                  */
-                $originalProduct = $observer->getEvent()->getProduct();
                 $originalQuoteItem = $observer->getEvent()->getQuoteItem();
                 $params = $this->request->getParams();
                 $quote = $originalQuoteItem->getQuote();
@@ -168,9 +178,37 @@ class AddWarranty implements ObserverInterface
                 }
             }
         } catch (NoSuchEntityException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
+            if ($warrantyProduct != null && $warrantyProduct->getId()) {
+                $this->messageManager->addErrorMessage(
+                    __('We were not able to add the %1 to cart, but we did add the %2 to cart',
+                        $warrantyProduct->getName(),
+                        $originalProduct->getName()
+                    )
+                );
+            } else {
+                $this->messageManager->addErrorMessage(
+                    __('We were not able to add the warranty product to cart, but we did add the %1 to cart',
+                        $originalProduct->getName()
+                    )
+                );
+            }
+            $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1'), $e->getMessage());
         } catch (LocalizedException $e) {
-            $this->messageManager->addErrorMessage($e->getMessage());
+            if ($warrantyProduct != null && $warrantyProduct->getId()) {
+                $this->messageManager->addErrorMessage(
+                    __('We were not able to add the %1 to cart, but we did add the %2 to cart',
+                        $warrantyProduct->getName(),
+                        $originalProduct->getName()
+                    )
+                );
+            } else {
+                $this->messageManager->addErrorMessage(
+                    __('We were not able to add the warranty product to cart, but we did add the %1 to cart',
+                        $originalProduct->getName()
+                    )
+                );
+            }
+            $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1'), $e->getMessage());
         }
     }
 
