@@ -71,7 +71,7 @@ class Service implements ServiceInterface
         /**
          * Client cannot be injected in constructor because Magento Object Manager in 2.1 has problems with it
          */
-        $this->client = new Client();
+        $this->client = new Client(['timeout' => 5, 'connect_timeout' => 5]);
     }
 
     /**

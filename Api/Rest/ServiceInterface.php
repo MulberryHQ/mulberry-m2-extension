@@ -40,7 +40,6 @@ interface ServiceInterface
      * @param $url
      * @param string $data
      * @param string $method
-     *
      * @return array
      */
     public function makeRequest($url, $data = '', $method = ServiceInterface::GET): array;

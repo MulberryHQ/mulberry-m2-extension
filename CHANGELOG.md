@@ -1,6 +1,11 @@
 Mulberry_Warranty changelog
 ========================
 
+1.2.2:
+- Added environment emulation
+- Added timeout to Http client
+- Updated messaging whenever warranty product add to cart is failing
+
 1.2.1:
 - Fixed issue when the warranty offer update didn't trigger if there was only inline & modal option enabled
 - Fixed issue when the warranty offer was not added to the shopping cart, if the final SKU is too long
