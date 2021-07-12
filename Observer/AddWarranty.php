@@ -115,6 +115,7 @@ class AddWarranty implements ObserverInterface
     {
         $originalProduct = $observer->getEvent()->getProduct();
         $warrantyProduct = null;
+
         try {
             /**
              * Add warranty products equal to the amount of original product added to cart.
@@ -178,7 +179,7 @@ class AddWarranty implements ObserverInterface
                 }
             }
         } catch (NoSuchEntityException $e) {
-            if ($warrantyProduct != null && $warrantyProduct->getId()) {
+            if ($warrantyProduct !== null && $warrantyProduct->getId()) {
                 $this->messageManager->addErrorMessage(
                     __('We were not able to add the %1 to cart, but we did add the %2 to cart',
                         $warrantyProduct->getName(),
@@ -192,9 +193,10 @@ class AddWarranty implements ObserverInterface
                     )
                 );
             }
-            $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1'), $e->getMessage());
+
+            $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1', $e->getMessage()));
         } catch (LocalizedException $e) {
-            if ($warrantyProduct != null && $warrantyProduct->getId()) {
+            if ($warrantyProduct !== null && $warrantyProduct->getId()) {
                 $this->messageManager->addErrorMessage(
                     __('We were not able to add the %1 to cart, but we did add the %2 to cart',
                         $warrantyProduct->getName(),
@@ -208,7 +210,8 @@ class AddWarranty implements ObserverInterface
                     )
                 );
             }
-            $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1'), $e->getMessage());
+
+            $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1', $e->getMessage()));
         }
     }
 

@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+1.2.3:
+- Fixed incorrect warranty observer message logging issue
+
 1.2.2:
 - Added environment emulation
 - Added timeout to Http client
