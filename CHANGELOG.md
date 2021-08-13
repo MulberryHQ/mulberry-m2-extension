@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+1.2.4:
+- Added "warranty_offer_id" to the request payload
+
 1.2.3:
 - Fixed incorrect warranty observer message logging issue
 

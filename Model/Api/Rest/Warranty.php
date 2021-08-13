@@ -32,6 +32,7 @@ class Warranty implements WarrantyServiceInterface
         'service_type' => ['service_type'],
         'warranty_hash' => ['warranty_hash'],
         'duration_months' => ['duration_months'],
+        'warranty_offer_id' => ['warranty_offer_id'],
     ];
 
     /**
@@ -68,7 +69,7 @@ class Warranty implements WarrantyServiceInterface
         $result = [];
 
         /**
-         * Warranty product information is stored in $response[0][0]
+         * Parse and save only required warranty product information
          */
         $warrantyProduct = (is_array($response) && isset($response['result'])) ? $response['result'] : [];
 
@@ -77,6 +78,7 @@ class Warranty implements WarrantyServiceInterface
                 'warranty_price' => (float) $warrantyProduct['cost'],
                 'service_type' => $warrantyProduct['service_type'],
                 'warranty_hash' => $warrantyProduct['warranty_hash'],
+                'warranty_offer_id' => $warrantyProduct['warranty_offer_id'],
                 'duration_months' => $warrantyProduct['duration_months'],
             ];
         }
