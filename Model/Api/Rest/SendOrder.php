@@ -192,9 +192,6 @@ class SendOrder implements SendOrderServiceInterface
 
         for ($i = 0; $i < (int) $item->getQtyOrdered(); $i++) {
             $this->warrantyItemsPayload[] = [
-                'product_id' => $originalProductData['product_sku'],
-                'product_price' => $item->getPrice(),
-                'product_title' => $item->getName(),
                 'warranty_hash' => $warrantyProductData['warranty_hash'],
                 'warranty_offer_id' => $warrantyProductData['warranty_offer_id'],
             ];
