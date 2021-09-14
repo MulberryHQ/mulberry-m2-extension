@@ -18,7 +18,9 @@ define([
             updatePrice: function updatePrice(newPrices) {
                 this._super(newPrices);
 
-                $('#product_addtocart_form').trigger('updateMulberryProduct', [this.cache.displayPrices.finalPrice.final]);
+                if (this.cache.displayPrices.finalPrice) {
+                    $('#product_addtocart_form').trigger('updateMulberryProduct', [this.cache.displayPrices.finalPrice.final]);
+                }
             },
         });
 
