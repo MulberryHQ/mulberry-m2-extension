@@ -188,7 +188,6 @@ class SendOrder implements SendOrderServiceInterface
     private function prepareItemPayload(Item $item)
     {
         $warrantyProductData = $item->getBuyRequest()->getWarrantyProduct();
-        $originalProductData = $item->getBuyRequest()->getOriginalProduct();
 
         for ($i = 0; $i < (int) $item->getQtyOrdered(); $i++) {
             $this->warrantyItemsPayload[] = [

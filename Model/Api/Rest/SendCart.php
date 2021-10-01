@@ -124,7 +124,7 @@ class SendCart implements SendCartServiceInterface
         return [
             'line_items' => $this->itemsPayload,
             'billing_address' => $this->prepareAddressData(),
-            'order_id' => $this->order->getOrderIdentifier(),
+            'order_id' => $this->order->getIncrementId(),
         ];
     }
 
