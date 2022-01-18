@@ -143,14 +143,14 @@ class SendCart implements SendCartServiceInterface
         return [
             'first_name' => $billingAddress->getFirstname(),
             'last_name' => $billingAddress->getLastname(),
-            'address1' => $billingAddress->getStreet(1),
+            'address1' => $billingAddress->getStreetLine(1),
             'phone' => $billingAddress->getTelephone(),
             'email' => $billingAddress->getEmail(),
             'city' => $billingAddress->getCity(),
             'zip' => $billingAddress->getPostcode(),
             'state' => $billingAddress->getRegionCode(),
             'country' => $this->countryFactory->create()->loadByCode($billingAddress->getCountryId())->getName(),
-            'address2' => $billingAddress->getStreet(2),
+            'address2' => $billingAddress->getStreetLine(2),
             'country_code' => $billingAddress->getCountryId(),
             'province_code' => $billingAddress->getRegionCode(),
         ];
