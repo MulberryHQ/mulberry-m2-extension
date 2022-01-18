@@ -102,6 +102,11 @@ class SendOrder implements SendOrderServiceInterface
      */
     public function sendOrder(OrderInterface $order)
     {
+        /**
+         * Reset the values whenever we call the function to avoid caching.
+         */
+        $this->resetState();
+
         $this->order = $order;
         $this->prepareItemsPayload();
 
@@ -118,7 +123,19 @@ class SendOrder implements SendOrderServiceInterface
         $response = $this->service->makeRequest(self::ORDER_SEND_ENDPOINT_URL, $payload, ServiceInterface::POST);
         $this->emulation->stopEnvironmentEmulation();
 
+        $this->resetState();
+
         return $this->parseResponse($response);
+    }
+
+    /**
+     * Reset the function state to avoid caching.
+     */
+    private function resetState()
+    {
+        $this->order = null;
+        $this->orderHasWarrantyProducts = false;
+        $this->warrantyItemsPayload = [];
     }
 
     /**

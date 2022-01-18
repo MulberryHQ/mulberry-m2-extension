@@ -82,6 +82,11 @@ class SendCart implements SendCartServiceInterface
      */
     public function sendCart(OrderInterface $order)
     {
+        /**
+         * Reset the values whenever we call the function to avoid caching.
+         */
+        $this->resetState();
+
         $this->order = $order;
 
         if (!$this->configHelper->isActive() || !$this->configHelper->isSendCartDataEnabled()) {
@@ -97,6 +102,15 @@ class SendCart implements SendCartServiceInterface
         $this->emulation->stopEnvironmentEmulation();
 
         return $this->parseResponse($response);
+    }
+
+    /**
+     * Reset the function state to avoid caching.
+     */
+    private function resetState()
+    {
+        $this->order = null;
+        $this->itemsPayload = [];
     }
 
     /**
