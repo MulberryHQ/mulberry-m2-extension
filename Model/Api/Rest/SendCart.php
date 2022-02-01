@@ -12,6 +12,7 @@ namespace Mulberry\Warranty\Model\Api\Rest;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\Order\Address;
 use Mulberry\Warranty\Api\Data\QueueInterface;
+use Mulberry\Warranty\Api\ProductHelperInterface;
 use Mulberry\Warranty\Api\Rest\SendCartServiceInterface;
 use Mulberry\Warranty\Api\Rest\ServiceInterface;
 use Magento\Sales\Model\Order\Item;
@@ -27,6 +28,16 @@ class SendCart implements SendCartServiceInterface
      * @var array $itemsPayload
      */
     private $itemsPayload = [];
+
+    /**
+     * @var array
+     */
+    private $warrantyItems;
+
+    /**
+     * @var array
+     */
+    private $orderItems;
 
     /**
      * @var ServiceInterface $service
@@ -54,23 +65,31 @@ class SendCart implements SendCartServiceInterface
     private $emulation;
 
     /**
+     * @var ProductHelperInterface
+     */
+    private $mulberryProductHelper;
+
+    /**
      * SendOrder constructor.
      *
      * @param ServiceInterface $service
      * @param HelperInterface $configHelper
      * @param CountryFactory $countryFactory
      * @param Emulation $emulation
+     * @param ProductHelperInterface $mulberryProductHelper
      */
     public function __construct(
         ServiceInterface $service,
         HelperInterface $configHelper,
         CountryFactory $countryFactory,
-        Emulation $emulation
+        Emulation $emulation,
+        ProductHelperInterface $mulberryProductHelper
     ) {
         $this->service = $service;
         $this->configHelper = $configHelper;
         $this->countryFactory = $countryFactory;
         $this->emulation = $emulation;
+        $this->mulberryProductHelper = $mulberryProductHelper;
     }
 
     /**
@@ -96,6 +115,20 @@ class SendCart implements SendCartServiceInterface
         $this->order = $order;
         $this->prepareItemsPayload();
 
+        /**
+         * If there are no items to send, create dummy response and mark order as "synced"
+         */
+        if (empty($this->itemsPayload)) {
+            $response = [
+                'is_successful' => true,
+                'response' => [
+                    'message' => __('No items available to export'),
+                ],
+            ];
+
+            return $this->parseResponse($response);
+        }
+
         $payload = $this->getOrderPayload();
         $this->emulation->startEnvironmentEmulation($this->order->getStoreId(), Area::AREA_FRONTEND, true);
         $response = $this->service->makeRequest(self::CART_SEND_ENDPOINT_URL, $payload, ServiceInterface::POST);
@@ -119,15 +152,82 @@ class SendCart implements SendCartServiceInterface
     private function prepareItemsPayload()
     {
         foreach ($this->order->getAllVisibleItems() as $item) {
-            /**
-             * We don't need to send warranty products as a payload
-             */
             if ($item->getProductType() === Type::TYPE_ID) {
-                continue;
+                $this->warrantyItems[] = [
+                    'item' => $item,
+                    'quantity' => (int) $item->getQtyOrdered(),
+                ];
+            } else {
+                $this->orderItems[] = [
+                    'item' => $item,
+                    'quantity' => (int) $item->getQtyOrdered(),
+                ];
             }
-
-            $this->prepareItemPayload($item);
         }
+
+        /**
+         * Send only order items without the associated warranty item
+         *
+         * @var $item Mage_Sales_Model_Order_Item
+         */
+        foreach ($this->orderItems as $key => $itemDataArray) {
+            $item = $itemDataArray['item'];
+
+            for ($i = 0; $i < (int) $item->getQtyOrdered(); $i++) {
+                if (!$this->isPostPurchaseEligible($itemDataArray, $key)) {
+                    continue;
+                }
+
+                /**
+                 * Add item for the post purchase payload
+                 */
+                $this->itemsPayload[] = $this->prepareItemPayload($item);
+            }
+        }
+    }
+
+    /**
+     * Check if the item is eligible for the post purchase.
+     *
+     * @param array $itemDataArray
+     * @param $key
+     * @return bool
+     */
+    private function isPostPurchaseEligible(array $itemDataArray, $key)
+    {
+        $item = $itemDataArray['item'];
+
+        /**
+         * Exclude the warranty products from the payload
+         */
+        if ($item->getProductType() === Type::TYPE_ID) {
+            return false;
+        }
+
+        /**
+         * Exclude order items with the warranty purchased
+         *
+         * @var Mage_Sales_Model_Order_Item $warrantyItem
+         */
+        foreach ($this->warrantyItems as $key => $warrantyItemArray) {
+            $warrantyItem = $warrantyItemArray['item'];
+            $associatedProduct = $warrantyItem->getBuyRequest()->getOriginalProduct();
+            $associatedSku = $associatedProduct['product_sku'];
+
+            if ($item->getSku() === $associatedSku) {
+                $warrantyItemArray['quantity'] = (int) $warrantyItemArray['quantity'] - 1;
+
+                if ((int) $warrantyItemArray['quantity'] < 1) {
+                    unset($this->warrantyItems[$key]);
+                }
+
+                $this->orderItems[$key]['quantity'] = (int) $this->orderItems[$key]['quantity'] - 1;
+
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**
@@ -178,13 +278,15 @@ class SendCart implements SendCartServiceInterface
      */
     private function prepareItemPayload(Item $item)
     {
-        for ($i = 0; $i < (int)$item->getQtyOrdered(); $i++) {
-            $this->itemsPayload[] = [
-                'product_id' => $item->getSku(),
-                'product_price' => $item->getPrice(),
-                'product_title' => $item->getName(),
-            ];
-        }
+        return [
+            'product_id' => $item->getSku(),
+            'product_price' => $item->getPrice(),
+            'product_title' => $item->getName(),
+            'meta' => [
+                'breadcrumbs' => $this->mulberryProductHelper->getProductBreadcrumbs($item->getProduct()),
+            ],
+            'images' => $this->mulberryProductHelper->getGalleryImagesInfo($item->getProduct()),
+        ];
     }
 
     /**

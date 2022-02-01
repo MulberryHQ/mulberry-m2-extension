@@ -1,6 +1,13 @@
 Mulberry_Warranty changelog
 ========================
 
+1.3.0:
+- Changed system config field mapping
+- Modified Mulberry breadcrumbs rendering logic
+- Added breadcrumbs & images to the post-purchase call
+- Fixed add-to-cart messages
+- Added validation for the warranty item before it's added to the shopping cart to prevent use cases when the Mulberry warranty product was added directly without API
+
 1.2.5:
 - Use order increment_id instead of order_identifier in send cart hook
 

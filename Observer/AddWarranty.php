@@ -19,6 +19,7 @@ use Magento\Framework\Event\ObserverInterface;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\ManagerInterface;
+use Magento\Framework\UrlInterface;
 use Magento\Quote\Model\Quote;
 use Magento\Store\Model\StoreManagerInterface;
 use Mulberry\Warranty\Api\Config\HelperInterface;
@@ -74,6 +75,11 @@ class AddWarranty implements ObserverInterface
     private $logger;
 
     /**
+     * @var UrlInterface $url
+     */
+    private $url;
+
+    /**
      * AddWarranty constructor.
      *
      * @param RequestInterface $request
@@ -95,7 +101,8 @@ class AddWarranty implements ObserverInterface
         ManagerInterface $messageManager,
         HelperInterface $helper,
         ItemOptionInterface $itemOptionHelper,
-        LoggerInterface $logger
+        LoggerInterface $logger,
+        UrlInterface $url
     ) {
         $this->request = $request;
         $this->warrantyItemUpdater = $itemUpdater;
@@ -106,6 +113,7 @@ class AddWarranty implements ObserverInterface
         $this->helper = $helper;
         $this->itemOptionHelper = $itemOptionHelper;
         $this->logger = $logger;
+        $this->url = $url;
     }
 
     /**
@@ -174,28 +182,21 @@ class AddWarranty implements ObserverInterface
                         /**
                          * Custom price should be set after quote item has been prepared
                          */
-                        $this->warrantyItemUpdater->setCustomWarrantyItemPrice($warrantyQuoteItem, $options);
+                        if ($warrantyQuoteItem instanceof Quote\Item) {
+                            $this->warrantyItemUpdater->setCustomWarrantyItemPrice($warrantyQuoteItem, $options);
+
+                            $this->messageManager->addComplexSuccessMessage(
+                                'addCartSuccessMessage',
+                                [
+                                    'product_name' => $warrantyQuoteItem->getName(),
+                                    'cart_url' => $this->getCartUrl(),
+                                ]
+                            );
+                        }
                     }
                 }
             }
-        } catch (NoSuchEntityException $e) {
-            if ($warrantyProduct !== null && $warrantyProduct->getId()) {
-                $this->messageManager->addErrorMessage(
-                    __('We were not able to add the %1 to cart, but we did add the %2 to cart',
-                        $warrantyProduct->getName(),
-                        $originalProduct->getName()
-                    )
-                );
-            } else {
-                $this->messageManager->addErrorMessage(
-                    __('We were not able to add the warranty product to cart, but we did add the %1 to cart',
-                        $originalProduct->getName()
-                    )
-                );
-            }
-
-            $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1', $e->getMessage()));
-        } catch (LocalizedException $e) {
+        } catch (\Exception $e) {
             if ($warrantyProduct !== null && $warrantyProduct->getId()) {
                 $this->messageManager->addErrorMessage(
                     __('We were not able to add the %1 to cart, but we did add the %2 to cart',
@@ -213,6 +214,16 @@ class AddWarranty implements ObserverInterface
 
             $this->logger->critical(__('Unable to add warranty product to cart. Exception message: %1', $e->getMessage()));
         }
+    }
+
+    /**
+     * Returns cart url
+     *
+     * @return string
+     */
+    private function getCartUrl()
+    {
+        return $this->url->getUrl('checkout/cart', ['_secure' => true]);
     }
 
     /**

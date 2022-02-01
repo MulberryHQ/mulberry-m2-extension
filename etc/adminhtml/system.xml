@@ -30,19 +30,17 @@
                 <field id="api_url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Mulberry API URL</label>
                     <comment><![CDATA[
-                    API URL used for Mulberry requests,
-                    - Staging value example: https://staging.getmulberry.com
-                    - Production value: TBD
-                    ]]></comment>
+                    API URL used for Mulberry requests, <br />
+                        <b>Sandbox:</b> https://app-staging.getmulberry.com <br />
+                        <b>Production:</b> https://app.getmulberry.com ]]></comment>
                 </field>
 
                 <field id="partner_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
                     <label>Mulberry Partner Base URL</label>
                     <comment><![CDATA[
-                    Mulberry Partner URL used for Mulberry requests,
-                    - Staging value example: https://partner-staging.getmulberry.com
-                    - Production value: TBD
-                    ]]></comment>
+                    Mulberry Partner URL used for Mulberry requests, <br />
+                        <b>Sandbox:</b> https://partner-staging.getmulberry.com <br />
+                        <b>Production:</b> https://partner.getmulberry.com ]]></comment>
                 </field>
 
                 <field id="platform_domain" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
@@ -59,15 +57,15 @@
                     ]]></comment>
                 </field>
 
-                <field id="api_token" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Mulberry API Token</label>
+                <field id="private_token" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                    <label>Private Token</label>
                     <comment><![CDATA[
                     Auth token to be used for API calls.
                     ]]></comment>
                 </field>
 
                 <field id="public_token" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
-                    <label>Mulberry Public Token</label>
+                    <label>Public Token</label>
                     <comment><![CDATA[
                     Public token to be used for offer init.
                     ]]></comment>

@@ -24,6 +24,7 @@ use Magento\Framework\Locale\FormatInterface;
 use Magento\Customer\Model\Session;
 use Magento\Framework\Pricing\PriceCurrencyInterface;
 use Mulberry\Warranty\Api\Config\HelperInterface;
+use Mulberry\Warranty\Api\ProductHelperInterface;
 
 class Container extends View
 {
@@ -33,17 +34,13 @@ class Container extends View
     private $warrantyConfigHelper;
 
     /**
-     * @var Data $catalogHelper
+     * @var ProductHelperInterface
      */
-    private $catalogHelper;
-
-    /**
-     * @var UrlBuilder
-     */
-    private $imageUrlBuilder;
+    private $mulberryProductHelper;
 
     /**
      * Container constructor.
+     *
      * @param HelperInterface $warrantyConfigHelper
      * @param Context $context
      * @param EncoderInterface $urlEncoder
@@ -55,7 +52,7 @@ class Container extends View
      * @param Session $customerSession
      * @param ProductRepositoryInterface $productRepository
      * @param PriceCurrencyInterface $priceCurrency
-     * @param Data $catalogHelper
+     * @param ProductHelperInterface $mulberryProductHelper
      * @param array $data
      */
     public function __construct(
@@ -70,8 +67,7 @@ class Container extends View
         Session $customerSession,
         ProductRepositoryInterface $productRepository,
         PriceCurrencyInterface $priceCurrency,
-        Data $catalogHelper,
-        UrlBuilder $imageUrlBuilder,
+        ProductHelperInterface $mulberryProductHelper,
         array $data = []
     ) {
         parent::__construct(
@@ -88,9 +84,8 @@ class Container extends View
             $data
         );
 
-        $this->catalogHelper = $catalogHelper;
-        $this->imageUrlBuilder = $imageUrlBuilder;
         $this->warrantyConfigHelper = $warrantyConfigHelper;
+        $this->mulberryProductHelper = $mulberryProductHelper;
     }
 
     /**
@@ -100,7 +95,7 @@ class Container extends View
      */
     protected function _toHtml()
     {
-        if (!$this->warrantyConfigHelper->isActive() || !$this->getPartnerUrl() || !$this->getApiUrl()) {
+        if (!$this->warrantyConfigHelper->isActive() || !$this->getPartnerUrl() || !$this->getApiUrl() || !$this->getPublicToken() || !$this->getRetailerId()) {
             return '';
         }
 
@@ -162,50 +157,18 @@ class Container extends View
     }
 
     /**
-     * Retrieve product gallery URLs
-     *
-     * @return Collection
+     * @return string
      */
     public function getGalleryImagesInfo()
     {
-        $result = [];
-        $product = $this->getProduct();
-        $images = $product->getMediaGalleryImages();
-        if (!$images instanceof \Magento\Framework\Data\Collection) {
-            return $images;
-        }
-
-        foreach ($images as $image) {
-            $image->setData(
-                'image_url',
-                $this->imageUrlBuilder->getUrl($image->getFile(), 'product_page_image_large')
-            );
-        }
-
-        foreach ($images as $image) {
-            $result[] = ['src' => $image->getImageUrl()];
-        }
-
-        return json_encode($result);
+        return $this->_jsonEncoder->encode($this->mulberryProductHelper->getGalleryImagesInfo($this->getProduct()));
     }
 
     /**
-     * Return breadcrumbs information, if the "Use Categories Path for Product URLs" setting is enabled.
+     * @return string
      */
     public function getBreadcrumbsInfo()
     {
-        $breacrumbs = $this->catalogHelper->getBreadcrumbPath();
-        $result = [];
-
-        foreach ($breacrumbs as $key => $crumb) {
-            if ($isCategory = $this->string->strpos($key, 'category') === 0) {
-                $result[] = [
-                    'category' => $crumb['label'],
-                    'url' => $crumb['link'],
-                ];
-            }
-        }
-
-        return json_encode($result);
+        return $this->_jsonEncoder->encode($this->mulberryProductHelper->getProductBreadcrumbs($this->getProduct()));
     }
 }

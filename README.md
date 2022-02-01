@@ -40,8 +40,10 @@ A merchant (admin user) can configure the following fields in Magento admin, whi
     - Sets the merchant's domain name. If no value is set, the global value of `$_SERVER['SERVER_NAME']` is used.
 - **Mulberry Retailer ID**
     - Sets the retailer ID generated in the Mulberry system.
-- **API Token**
-    - Sets the Mulberry API Token for merchant authorization, when requesting warranty product information on the PDP.
+- **Private Token**
+    - Sets the Mulberry Private Token for merchant authorization, when sending API calls through the backend.
+- **Public Token**
+    - Sets the Mulberry Public Token for merchant authorization, when requesting warranty product information on the PDP.
 - **Enable Post Purchase**
     - Enables/disables the Mulberry "Post Purchase" hook.
 
@@ -64,7 +66,7 @@ To set a custom image for a warranty product, use the [default Magento product i
 
 **IMPORTANT!!!**
 
-Please do **not** modify the SKU of the placeholder product. Otherwise the system won't be able to recognize and add a warranty product for an original Magento product.
+Please do **not** modify the SKU of the placeholder product. Otherwise the system won't be able to recognize and add a warranty product for the original Magento product.
 
 ## Technical Documentation
 
@@ -80,6 +82,10 @@ In order to add a warranty product to the cart, as well as process it during the
 - `sales_quote_item_set_product` On this event, the module updates the product name of the warranty product (quote item).
 
 - `checkout_submit_all_after` On this event, the module runs the checkout success & post purchase hook. As soon as the order is placed, Magento makes an API call to the Mulberry platform, notifying it that the warranty product has been purchased. The API call is made only if the Magento order contains a warranty product.
+
+- `order_cancel_after` On this event, the module checks if there's any warranty product available on the order. If so, it sends Mulberry cancel API request.
+
+- `sales_order_place_before` On this event, we generate the unique order identifier aka UUID
 
 ### Quote item options modifications
 

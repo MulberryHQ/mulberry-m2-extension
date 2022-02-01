@@ -12,6 +12,7 @@
     <preference for="Mulberry\Warranty\Api\Config\HelperInterface" type="Mulberry\Warranty\Helper\ConfigHelper"/>
     <preference for="Mulberry\Warranty\Api\ItemUpdaterInterface" type="Mulberry\Warranty\Helper\ItemUpdater"/>
     <preference for="Mulberry\Warranty\Api\ItemOptionInterface" type="Mulberry\Warranty\Helper\ItemOptionHelper"/>
+    <preference for="Mulberry\Warranty\Api\ProductHelperInterface" type="Mulberry\Warranty\Helper\ProductHelper"/>
     <preference for="Mulberry\Warranty\Api\Rest\ServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\Service"/>
     <preference for="Mulberry\Warranty\Api\Rest\WarrantyServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\Warranty"/>
     <preference for="Mulberry\Warranty\Api\Rest\SendOrderServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\SendOrder"/>
