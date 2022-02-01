@@ -119,8 +119,8 @@ class Service implements ServiceInterface
             $this->log->error('Bad Response: ' . $e->getMessage());
             $this->log->error((string)$e->getRequest()->getBody());
 
-            $response['response_status_code'] = $e->getCode();
-            $response['response_status_message'] = $e->getMessage();
+            $response['response_status_code'] = $e->getResponse()->getStatusCode();
+            $response['response_status_message'] = $e->getResponse()->getReasonPhrase();
             $response = $this->processResponse($response);
 
             if ($e->hasResponse()) {

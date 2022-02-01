@@ -23,7 +23,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     const XML_PATH_PARTNER_URL = 'mulberry_warranty/general/partner_url';
     const XML_PATH_PLATFORM_DOMAIN = 'mulberry_warranty/general/platform_domain';
     const XML_PATH_RETAILER_ID = 'mulberry_warranty/general/retailer_id';
-    const XML_PATH_API_TOKEN = 'mulberry_warranty/general/api_token';
+    const XML_PATH_PRIVATE_TOKEN = 'mulberry_warranty/general/private_token';
     const XML_PATH_PUBLIC_TOKEN = 'mulberry_warranty/general/public_token';
     const XML_PATH_SEND_CART_DATA = 'mulberry_warranty/general/send_cart_data';
 
@@ -88,7 +88,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     public function getApiToken()
     {
         return $this->scopeConfig->getValue(
-            self::XML_PATH_API_TOKEN,
+            self::XML_PATH_PRIVATE_TOKEN,
             ScopeInterface::SCOPE_STORE
         );
     }

@@ -17,7 +17,8 @@
                 <partner_url>https://partner-staging.getmulberry.com</partner_url>
                 <platform_domain>mulberry-staging.myshopify.com</platform_domain>
                 <retailer_id></retailer_id>
-                <api_token></api_token>
+                <private_token></private_token>
+                <public_token></public_token>
                 <send_cart_data>0</send_cart_data>
             </general>
         </mulberry_warranty>
