@@ -10,11 +10,18 @@
 namespace Mulberry\Warranty\Model\Product;
 
 use Magento\Catalog\Model\Product;
+use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Type\AbstractType;
 use Magento\Catalog\Api\ProductRepositoryInterface;
-use Magento\Framework\Exception\LocalizedException;
+use Magento\Eav\Model\Config;
+use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\File\UploaderFactory;
+use Magento\Framework\Filesystem;
 use Magento\Framework\Message\ManagerInterface as MessageManager;
+use Magento\Framework\Registry;
+use Magento\Framework\Serialize\Serializer\Json;
+use Magento\MediaStorage\Helper\File\Storage\Database;
+use Psr\Log\LoggerInterface;
 
 class Type extends AbstractType
 {
@@ -26,18 +33,18 @@ class Type extends AbstractType
     private $messageManager;
 
     public function __construct(
-        \Magento\Catalog\Model\Product\Option $catalogProductOption,
-        \Magento\Eav\Model\Config $eavConfig,
-        \Magento\Catalog\Model\Product\Type $catalogProductType,
-        \Magento\Framework\Event\ManagerInterface $eventManager,
-        \Magento\MediaStorage\Helper\File\Storage\Database $fileStorageDb,
-        \Magento\Framework\Filesystem $filesystem,
-        \Magento\Framework\Registry $coreRegistry,
-        \Psr\Log\LoggerInterface $logger,
+        Option $catalogProductOption,
+        Config $eavConfig,
+        Product\Type $catalogProductType,
+        ManagerInterface $eventManager,
+        Database $fileStorageDb,
+        Filesystem $filesystem,
+        Registry $coreRegistry,
+        LoggerInterface $logger,
         ProductRepositoryInterface $productRepository,
-        \Magento\Framework\Serialize\Serializer\Json $serializer = null,
-        UploaderFactory $uploaderFactory = null,
-        MessageManager $messageManager
+        MessageManager $messageManager,
+        Json $serializer = null,
+        UploaderFactory $uploaderFactory = null
     ) {
         parent::__construct($catalogProductOption, $eavConfig, $catalogProductType, $eventManager, $fileStorageDb, $filesystem, $coreRegistry, $logger,
             $productRepository, $serializer, $uploaderFactory);
