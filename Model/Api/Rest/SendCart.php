@@ -168,7 +168,7 @@ class SendCart implements SendCartServiceInterface
         /**
          * Send only order items without the associated warranty item
          *
-         * @var $item Mage_Sales_Model_Order_Item
+         * @var $item Item
          */
         foreach ($this->orderItems as $key => $itemDataArray) {
             $item = $itemDataArray['item'];
@@ -207,7 +207,7 @@ class SendCart implements SendCartServiceInterface
         /**
          * Exclude order items with the warranty purchased
          *
-         * @var Mage_Sales_Model_Order_Item $warrantyItem
+         * @var Item $warrantyItem
          */
         foreach ($this->warrantyItems as $key => $warrantyItemArray) {
             $warrantyItem = $warrantyItemArray['item'];

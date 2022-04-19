@@ -1,6 +1,11 @@
 Mulberry_Warranty changelog
 ========================
 
+1.3.1:
+- Fixed issue when empty Mulberry container was adding redundant space for the "actions" CSS class
+- Added dependency, so the "post-purchase" items are synced only if the respective order status sync is "synced" or "skipped"
+- Removed "Product URL" parameter for the warranty product cart item renderer
+
 1.3.0:
 - Changed system config field mapping
 - Modified Mulberry breadcrumbs rendering logic

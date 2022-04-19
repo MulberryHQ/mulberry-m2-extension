@@ -36,4 +36,12 @@ class Warranty extends Renderer implements IdentityInterface
     {
         return '';
     }
+
+    /**
+     * @return false
+     */
+    public function hasProductUrl() : bool
+    {
+        return false;
+    }
 }

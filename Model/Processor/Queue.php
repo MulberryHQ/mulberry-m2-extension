@@ -10,7 +10,6 @@ declare(strict_types=1);
 
 namespace Mulberry\Warranty\Model\Processor;
 
-use Magento\Catalog\Model\Product;
 use Magento\Framework\Stdlib\DateTime\DateTimeFactory;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Model\ResourceModel\Order\Collection as OrderCollection;
@@ -165,6 +164,7 @@ class Queue implements QueueProcessorInterface
         $collection = $this->getOrderCollection();
         $this->addSyncStatusFilter($collection, null);
         $this->addActionTypeFilter($collection, self::ACTION_TYPE_CART);
+        $this->excludePendingAndSkippedOrders($collection);
 
         return $collection;
     }
@@ -198,7 +198,7 @@ class Queue implements QueueProcessorInterface
     /**
      * @param OrderCollection $collection
      * @param $syncstatus
-     * @return OrderCollection
+     * @return $this
      */
     private function addSyncStatusFilter(OrderCollection $collection, $syncstatus)
     {
@@ -215,13 +215,33 @@ class Queue implements QueueProcessorInterface
      *
      * @param OrderCollection $collection
      * @param $actionType
-     * @return OrderCollection
+     * @return $this
      */
     private function addActionTypeFilter(OrderCollection $collection, $actionType)
     {
         $collection->getSelect()->where(
             'mwq.action_type = ?',
             $actionType
+        );
+
+        return $this;
+    }
+
+    /**
+     * @param OrderCollection $collection
+     * @return $this
+     */
+    private function excludePendingAndSkippedOrders(OrderCollection $collection)
+    {
+        $collection->getSelect()->joinLeft(
+            ['mwq_order' => 'mulberry_warranty_queue'],
+            'mwq.order_id = mwq_order.order_id AND mwq_order.action_type = "order"',
+            ['order_sync_status' => 'sync_status']
+        );
+
+        $collection->getSelect()->where(
+            'mwq_order.sync_status IN (?)',
+            [QueueInterface::STATUS_SKIPPED, QueueInterface::STATUS_SYNCED]
         );
 
         return $this;
