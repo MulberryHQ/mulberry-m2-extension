@@ -76,6 +76,7 @@ define([
                             window.mulberry.modal.init({
                                 offers,
                                 settings,
+                                placement: 'pdp',
                                 onWarrantyDecline: function () {
                                     $(self.element).trigger('onWarrantyDecline');
                                 },
