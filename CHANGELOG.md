@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+1.3.2:
+- Reset warranty selection on configuration chang
+
 1.3.1:
 - Fixed issue when empty Mulberry container was adding redundant space for the "actions" CSS class
 - Added dependency, so the "post-purchase" items are synced only if the respective order status sync is "synced" or "skipped"

@@ -285,6 +285,12 @@ define([
 
                         if (settings.has_inline) {
                             window.mulberry.inline.updateOffer(window.mulberry.core.offers);
+
+                            /**
+                             * Reset warranty selection on configuration change
+                             */
+                            window.mulberry.inline.deselectOffer();
+                            self.toggleWarranty(false, false);
                         }
                     });
 
