@@ -32,12 +32,12 @@ class SendCart implements SendCartServiceInterface
     /**
      * @var array
      */
-    private $warrantyItems;
+    private $warrantyItems = [];
 
     /**
      * @var array
      */
-    private $orderItems;
+    private $orderItems = [];
 
     /**
      * @var ServiceInterface $service
