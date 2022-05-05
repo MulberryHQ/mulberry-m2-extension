@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+1.3.3:
+- Added default array declaration for post purchase hook
+
 1.3.2:
 - Reset warranty selection on configuration chang
 
