@@ -262,7 +262,8 @@ define([
         updateMulberryProduct: function updateMulberryProduct(newPrice)
         {
             this.prepareMulberryProduct(newPrice);
-            var settings = window.mulberry.core.settings;
+            var settings = window.mulberry.core.settings,
+                self = this;
 
             if (!window.mulberry || (!settings.has_modal && !settings.has_inline)) {
                 return;

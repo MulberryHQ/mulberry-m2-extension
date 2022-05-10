@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+1.3.4:
+- Added missing "self" declaration for the PDP component
+
 1.3.3:
 - Added default array declaration for post purchase hook
 
