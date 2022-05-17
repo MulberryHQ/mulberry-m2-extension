@@ -80,11 +80,14 @@ define([
             var self = this,
                 counter = 0,
                 initListeners = function() {
-                    if (window.mulberry?.modal) {
+                    if (window.mulberry?.modal?.length > 0) {
                       self.addMulberryListeners();
                       self.options.mulberryOverlayActive = false;
                     } else {
-                        if (counter <= 10) {
+                        /**
+                         * Fix for slow connections.
+                         */
+                        if (counter <= 20) {
                             counter++;
                             setTimeout(function() {
                                 initListeners();
@@ -102,10 +105,34 @@ define([
          * Register events on form submit
          */
         targetModule.prototype.submitForm = wrapper.wrap(submitForm, function (original) {
-            if (this.options.mulberryOverlayActive || !window.mulberry || !window.mulberry.modal || !window.mulberry.inline || !window.mulberry.core.offers.length) {
+            /**
+             * if Mulberry doesn't exist - skip
+             */
+            if (this.options.mulberryOverlayActive || !window.mulberry) {
                 return original();
             }
 
+            var offersAvailable = window.mulberry?.core?.offers?.length > 0,
+                hasModal = window.mulberry?.core?.settings?.has_modal,
+                modalOffersInitialized = window.mulberry?.modal?.length > 0;
+
+            /**
+             * If Mulberry modal setting is disabled - skip
+             */
+            if (!hasModal) {
+                return original();
+            }
+
+            /**
+             * If there are no Mulberry offers for the current selection - skip
+             */
+            if (!offersAvailable || !modalOffersInitialized) {
+                return original();
+            }
+
+            /**
+             * Toggle modal if the warranty is not selected
+             */
             if (this.getMulberryWarrantyElement().val() === '') {
                 window.mulberry.modal.open();
                 this.options.mulberryOverlayActive = true;

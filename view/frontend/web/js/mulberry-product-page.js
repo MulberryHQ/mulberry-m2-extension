@@ -278,26 +278,76 @@ define([
             this.options.productUpdateTimer = setTimeout(function () {
                 if (this.hasConfigurationChanges()) {
                     window.mulberry.core.getWarrantyOffer(window.mulberryProductData.activeSelection).then(function (offers) {
-                        var settings = window.mulberry.core.settings;
-
-                        if (settings.has_modal) {
-                            window.mulberry.modal.updateOffer(window.mulberry.core.offers);
-                        }
-
-                        if (settings.has_inline) {
-                            window.mulberry.inline.updateOffer(window.mulberry.core.offers);
-
-                            /**
-                             * Reset warranty selection on configuration change
-                             */
-                            window.mulberry.inline.deselectOffer();
-                            self.toggleWarranty(false, false);
-                        }
+                        self.updateOffers();
                     });
 
                     $(this.options.warrantySkuElement).val(window.mulberryProductData.activeSelection.id);
                 }
             }.bind(this), this.options.mulberryProductUpdateDelay);
+        },
+
+        /**
+         * Check whether Mulberry offers are available or not.
+         */
+        offersAvailable: function offersAvailable() {
+            return window.mulberry?.core?.offers?.length > 0;
+        },
+
+        inlineOfferInitialized: function inlineOfferInitialized() {
+            return window.mulberry?.inline?.length > 0;
+        },
+
+        modalOfferInitialized: function modalOfferInitialized() {
+            return window.mulberry?.modal?.length > 0;
+        },
+
+        /**
+         * Toggle Mulberry offers update function.
+         * If inline/modal was not initialized yet - toggle init function
+         */
+        updateOffers: function updateOffers() {
+            var settings = window.mulberry.core.settings,
+                offers = window.mulberry.core.offers,
+                self = this;
+
+            if (settings.has_modal) {
+                if (self.modalOfferInitialized()) {
+                    window.mulberry.modal.updateOffer(offers);
+                } else {
+                    window.mulberry.modal.init({
+                        offers,
+                        settings,
+                        placement: 'pdp',
+                        onWarrantyDecline: function () {
+                            $(self.element).trigger('onWarrantyDecline');
+                        },
+                        onWarrantySelect: function (warranty) {
+                            $(self.element).trigger('onWarrantySelect', warranty);
+                        }
+                    });
+                }
+            }
+
+            if (settings.has_inline) {
+                if (self.inlineOfferInitialized()) {
+                    window.mulberry.inline.updateOffer(offers);
+                } else {
+                    window.mulberry.inline.init({
+                        offers: offers,
+                        settings: settings,
+                        selector: '.mulberry-inline-container',
+                        onWarrantyToggle: function(warranty) {
+                            self.toggleWarranty(warranty.offer, warranty.isSelected);
+                        }
+                    });
+                }
+
+                /**
+                 * Reset warranty selection on configuration change
+                 */
+                window.mulberry.inline.deselectOffer();
+                self.toggleWarranty(false, false);
+            }
         },
 
         /**
