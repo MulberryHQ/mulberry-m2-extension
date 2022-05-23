@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+1.4.1:
+- Added CSP whitelist records for Mulberry API
+
 1.4.0:
 - Added logic to init inline/modal offers when there were no offers for the initial product selection
 - Update frontend logic to use new SDK modal/inline offer checks
