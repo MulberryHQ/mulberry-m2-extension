@@ -20,6 +20,7 @@
                 <private_token></private_token>
                 <public_token></public_token>
                 <send_cart_data>0</send_cart_data>
+                <enable_force_logging>0</enable_force_logging>
             </general>
         </mulberry_warranty>
     </default>

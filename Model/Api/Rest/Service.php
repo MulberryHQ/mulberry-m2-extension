@@ -179,8 +179,10 @@ class Service implements ServiceInterface
      * @param $request
      * @param $response
      * @param $url
+     * @param $useDebug
+     * @return void
      */
-    private function logRequestResponse($request, $response, $url)
+    private function logRequestResponse($request, $response, $url, $force = false)
     {
         $req = [
             'headers' => $this->headers,
@@ -191,7 +193,12 @@ class Service implements ServiceInterface
             'action' => $url,
         ];
 
-        $this->log->debug(json_encode(['REQUEST' => $req]), $context);
-        $this->log->debug(json_encode(['RESPONSE' => $response]), $context);
+        if ($this->configHelper->isForceLoggingEnabled()) {
+            $this->log->info(json_encode(['REQUEST' => $req]), $context);
+            $this->log->info(json_encode(['RESPONSE' => $response]), $context);
+        } else {
+            $this->log->debug(json_encode(['REQUEST' => $req]), $context);
+            $this->log->debug(json_encode(['RESPONSE' => $response]), $context);
+        }
     }
 }

@@ -66,4 +66,11 @@ interface HelperInterface
      * @return mixed
      */
     public function isSendCartDataEnabled();
+
+    /**
+     * Yes/No flag to force log Mulberry API request/response information
+     *
+     * @return mixed
+     */
+    public function isForceLoggingEnabled();
 }

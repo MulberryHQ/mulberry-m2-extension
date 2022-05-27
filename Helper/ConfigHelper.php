@@ -26,6 +26,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     const XML_PATH_PRIVATE_TOKEN = 'mulberry_warranty/general/private_token';
     const XML_PATH_PUBLIC_TOKEN = 'mulberry_warranty/general/public_token';
     const XML_PATH_SEND_CART_DATA = 'mulberry_warranty/general/send_cart_data';
+    const XML_PATH_ENABLE_FORCE_LOGGING = 'mulberry_warranty/general/enable_force_logging';
 
     /**
      * {@inheritdoc}
@@ -34,7 +35,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return (bool)$this->scopeConfig->getValue(
             self::XML_PATH_IS_ACTIVE,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 
@@ -45,7 +46,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_API_URL,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 
@@ -56,7 +57,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_PARTNER_URL,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 
@@ -67,7 +68,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_PLATFORM_DOMAIN,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 
@@ -78,7 +79,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_RETAILER_ID,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 
@@ -89,7 +90,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_PRIVATE_TOKEN,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 
@@ -100,7 +101,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_SEND_CART_DATA,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 
@@ -111,7 +112,18 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_PUBLIC_TOKEN,
-            ScopeInterface::SCOPE_STORE
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function isForceLoggingEnabled()
+    {
+        return $this->scopeConfig->getValue(
+            self::XML_PATH_ENABLE_FORCE_LOGGING,
+            ScopeInterface::SCOPE_WEBSITE
         );
     }
 }

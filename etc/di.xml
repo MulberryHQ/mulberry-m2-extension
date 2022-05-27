@@ -76,6 +76,7 @@
         <arguments>
             <argument name="commands" xsi:type="array">
                 <item name="mulberry_warranty_crawl" xsi:type="object">Mulberry\Warranty\Console\Command\Crawl</item>
+                <item name="mulberry_warranty_run_order" xsi:type="object">Mulberry\Warranty\Console\Command\RunOrder</item>
             </argument>
         </arguments>
     </type>

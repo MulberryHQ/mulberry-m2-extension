@@ -129,16 +129,17 @@ class Queue implements QueueProcessorInterface
                     break;
             }
 
+            $queue->setSyncStatus($result['status']);
+            $queue->setSyncDate($this->dateTimeFactory->create()->gmtDate());
+            $this->queueRepository->save($queue);
+
             /**
              * Log the "error" message if the response status is not "synced"
              */
             if ($result['status'] !== QueueInterface::STATUS_SYNCED) {
                 $this->logger->error(json_encode($result));
+                return false;
             }
-
-            $queue->setSyncStatus($result['status']);
-            $queue->setSyncDate($this->dateTimeFactory->create()->gmtDate());
-            $this->queueRepository->save($queue);
         }
 
         return true;

@@ -22,12 +22,12 @@
             <group id="general" translate="label" type="text" sortOrder="0" showInDefault="1" showInWebsite="1" showInStore="0">
                 <label>General</label>
 
-                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="active" translate="label" type="select" sortOrder="10" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable Mulberry Warranty Block</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
 
-                <field id="api_url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="api_url" translate="label" type="text" sortOrder="20" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mulberry API URL</label>
                     <comment><![CDATA[
                     API URL used for Mulberry requests, <br />
@@ -35,7 +35,7 @@
                         <b>Production:</b> https://app.getmulberry.com ]]></comment>
                 </field>
 
-                <field id="partner_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="partner_url" translate="label" type="text" sortOrder="30" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mulberry Partner Base URL</label>
                     <comment><![CDATA[
                     Mulberry Partner URL used for Mulberry requests, <br />
@@ -43,36 +43,41 @@
                         <b>Production:</b> https://partner.getmulberry.com ]]></comment>
                 </field>
 
-                <field id="platform_domain" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="platform_domain" translate="label" type="text" sortOrder="40" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Platform Domain Name</label>
                     <comment><![CDATA[
                     Used for API init, if no value is set, $_SERVER['SERVER_NAME'] is used.
                     ]]></comment>
                 </field>
 
-                <field id="retailer_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="retailer_id" translate="label" type="text" sortOrder="50" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Mulberry Retailer ID</label>
                     <comment><![CDATA[
                     Retailer ID used for send order API call.
                     ]]></comment>
                 </field>
 
-                <field id="private_token" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="private_token" translate="label" type="text" sortOrder="60" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Private Token</label>
                     <comment><![CDATA[
                     Auth token to be used for API calls.
                     ]]></comment>
                 </field>
 
-                <field id="public_token" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="public_token" translate="label" type="text" sortOrder="70" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Public Token</label>
                     <comment><![CDATA[
                     Public token to be used for offer init.
                     ]]></comment>
                 </field>
 
-                <field id="send_cart_data" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="1">
+                <field id="send_cart_data" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
                     <label>Enable Post Purchase</label>
+                    <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
+                </field>
+
+                <field id="enable_force_logging" translate="label" type="select" sortOrder="80" showInDefault="1" showInWebsite="1" showInStore="0">
+                    <label>Enable Force Request/Response Logging</label>
                     <source_model>Magento\Config\Model\Config\Source\Yesno</source_model>
                 </field>
             </group>
