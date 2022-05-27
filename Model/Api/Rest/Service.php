@@ -194,9 +194,11 @@ class Service implements ServiceInterface
         ];
 
         if ($this->configHelper->isForceLoggingEnabled()) {
+            $this->log->info(json_encode(['HEADERS' => $this->headers]));
             $this->log->info(json_encode(['REQUEST' => $req]), $context);
             $this->log->info(json_encode(['RESPONSE' => $response]), $context);
         } else {
+            $this->log->debug(json_encode(['HEADERS' => $this->headers]));
             $this->log->debug(json_encode(['REQUEST' => $req]), $context);
             $this->log->debug(json_encode(['RESPONSE' => $response]), $context);
         }
