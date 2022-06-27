@@ -2,6 +2,8 @@
 
 namespace Mulberry\Warranty\Console\Command;
 
+use Magento\Framework\App\State;
+use Magento\Framework\App\Area;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Mulberry\Warranty\Api\QueueProcessorInterface;
 use Mulberry\Warranty\Model\Processor\Queue;
@@ -25,15 +27,32 @@ class RunOrder extends Command
      */
     const MESSAGE_ERROR = 'Error: %s';
 
+    /**
+     * @var OrderRepositoryInterface
+     */
+    private $orderRepository;
+
+    /**
+     * @var QueueProcessorInterface
+     */
+    private $queueProcessor;
+
+    /**
+     * @var State
+     */
+    private $state;
+
     public function __construct(
         OrderRepositoryInterface $orderRepository,
         QueueProcessorInterface $queueProcessor,
+        State $state,
         string $name = null
     ) {
         parent::__construct($name);
 
         $this->orderRepository = $orderRepository;
         $this->queueProcessor = $queueProcessor;
+        $this->state = $state;
     }
 
     /**
@@ -60,6 +79,8 @@ class RunOrder extends Command
     protected function execute(InputInterface $input, OutputInterface $output): void
     {
         try {
+            $this->state->setAreaCode(Area::AREA_FRONTEND);
+
             $orderId = $input->getOption(self::INPUT_KEY_ORDER_ID);
             $actionType = $input->getOption(self::INPUT_KEY_ACTION_TYPE);
 
