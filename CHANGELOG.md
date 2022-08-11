@@ -1,6 +1,10 @@
 Mulberry_Warranty changelog
 ========================
 
+1.5.2:
+- Fixed order sync command through the cron task
+- Change data type of entity_id to allow for more than ~65K records to be inserted
+
 1.5.0:
 - Added force logging functionality for the Mulberry API calls
 - Added separate CLI command to be able to force sync order & cart hooks using the Magento order_id param
