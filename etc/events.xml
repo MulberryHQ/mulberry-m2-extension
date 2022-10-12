@@ -24,4 +24,7 @@
     <event name="sales_order_place_before">
         <observer name="mulberry_generate_order_uuid" instance="Mulberry\Warranty\Observer\GenerateOrderUuid"/>
     </event>
+    <event name="sales_order_creditmemo_save_after">
+        <observer name="mulberry_refund_order_items" instance="Mulberry\Warranty\Observer\RefundOrder"/>
+    </event>
 </config>

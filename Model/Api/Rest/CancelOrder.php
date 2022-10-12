@@ -71,13 +71,25 @@ class CancelOrder implements CancelOrderServiceInterface
      * Send order payload to Mulberry system
      *
      * @param OrderInterface $order
-     *
-     * @return mixed
+     * @param array $items
+     * @return array
      */
-    public function cancelOrder(OrderInterface $order)
+    public function cancelOrder(OrderInterface $order, array $items = []): array
     {
         $this->order = $order;
-        $this->prepareItemsPayload();
+
+        if (empty($items)) {
+            /**
+             * Full order cancel handler
+             */
+            $this->prepareItemsPayload();
+        } else {
+            /**
+             * Creditmemo / partial refund handler
+             */
+            $this->preparePartialItemsPayload($items);
+        }
+
         if (!$this->orderHasWarrantyProducts) {
             return [];
         }
@@ -136,6 +148,36 @@ class CancelOrder implements CancelOrderServiceInterface
             $this->warrantyItemsPayload[] = [
                 'product_id' => $originalProductData['product_sku'],
             ];
+        }
+    }
+
+    /**
+     * Prepare cancellation payload for order item
+     *
+     * @param Item $item
+     */
+    private function prepareItemRefundedPayload(Item $item)
+    {
+        $originalProductData = $item->getBuyRequest()->getOriginalProduct();
+
+        for ($i = 0; $i < (int) $item->getQtyRefunded(); $i++) {
+            $this->warrantyItemsPayload[] = array(
+                'product_id' => $originalProductData['product_sku'],
+            );
+        }
+    }
+
+    /**
+     * @param array $items
+     * @return void
+     */
+    private function preparePartialItemsPayload(array $items = [])
+    {
+        foreach ($items as $item) {
+            if ($item->getProductType() === Type::TYPE_ID && $item->getQtyRefunded()) {
+                $this->orderHasWarrantyProducts = true;
+                $this->prepareItemRefundedPayload($item);
+            }
         }
     }
 

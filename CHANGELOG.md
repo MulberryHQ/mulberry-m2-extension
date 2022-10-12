@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+1.6.0:
+- Added event to perform partial refund aka creditmemo
+
 1.5.2:
 - Fixed order sync command through the cron task
 - Change data type of entity_id to allow for more than ~65K records to be inserted
