@@ -56,7 +56,7 @@ class SendOrder
         $collection->setPageSize(self::BATCH_SIZE)
             ->setCurPage(1);
 
-        $this->logger->addInfo(
+        $this->logger->info(
             __('Starting SendOrder action processing. There are %1 records that will be processed', $collection->getSize())
         );
 
@@ -64,6 +64,6 @@ class SendOrder
             $this->queueProcessor->process($order, Queue::ACTION_TYPE_ORDER);
         }
 
-        $this->logger->addInfo('Cronjob SendOrder is finished.');
+        $this->logger->info('Cronjob SendOrder is finished.');
     }
 }

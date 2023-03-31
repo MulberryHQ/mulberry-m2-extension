@@ -82,7 +82,12 @@ class UpgradeData implements UpgradeDataInterface
         }
 
         if (version_compare($context->getVersion(), '1.0.0', '<')) {
-            $this->createWarrantyProducts();
+            $this->createWarrantyProducts($this->warrantyProductSkus);
+        }
+
+        if (version_compare($context->getVersion(), '1.0.1', '<')) {
+            $productsToAdd = ['mulberry-warranty-120-months' => 'Mulberry Warranty Product - 120 Months'];
+            $this->createWarrantyProducts($productsToAdd);
         }
     }
 
@@ -93,9 +98,9 @@ class UpgradeData implements UpgradeDataInterface
      * @throws \Magento\Framework\Exception\InputException
      * @throws \Magento\Framework\Exception\StateException
      */
-    private function createWarrantyProducts()
+    private function createWarrantyProducts($productsToAdd)
     {
-        foreach ($this->warrantyProductSkus as $sku => $name) {
+        foreach ($productsToAdd as $sku => $name) {
             $product = $this->productFactory->create();
 
             if (!$product->loadByAttribute('sku', $sku)) {

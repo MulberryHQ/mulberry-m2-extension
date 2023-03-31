@@ -56,7 +56,7 @@ class SendCart
         $collection->setPageSize(self::BATCH_SIZE)
             ->setCurPage(1);
 
-        $this->logger->addInfo(
+        $this->logger->info(
             __('Starting SendCart action processing. There are %1 records that will be processed', $collection->getSize())
         );
 
@@ -64,6 +64,6 @@ class SendCart
             $this->queueProcessor->process($order, Queue::ACTION_TYPE_CART);
         }
 
-        $this->logger->addInfo('Cronjob SendCart is executed.');
+        $this->logger->info('Cronjob SendCart is executed.');
     }
 }
