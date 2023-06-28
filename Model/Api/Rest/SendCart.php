@@ -205,6 +205,13 @@ class SendCart implements SendCartServiceInterface
         }
 
         /**
+         * Exclude order items where the Magento products does not exist anymore.
+         */
+        if (!$item->getProduct()) {
+            return false;
+        }
+
+        /**
          * Exclude order items with the warranty purchased
          *
          * @var Item $warrantyItem

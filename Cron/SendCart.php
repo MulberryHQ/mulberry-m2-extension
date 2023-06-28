@@ -61,9 +61,13 @@ class SendCart
         );
 
         foreach ($collection as $order) {
-            $this->queueProcessor->process($order, Queue::ACTION_TYPE_CART);
+            try {
+                $this->queueProcessor->process($order, Queue::ACTION_TYPE_CART);
+            } catch (\Exception $e) {
+                $this->logger->error(__('There was an error when processing "cart" action for order with id "%1", error: %2', $order->getId(), $e->getMessage()));
+            }
         }
 
-        $this->logger->info('Cronjob SendCart is executed.');
+        $this->logger->info('Cronjob SendCart is finished.');
     }
 }

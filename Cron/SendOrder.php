@@ -61,7 +61,11 @@ class SendOrder
         );
 
         foreach ($collection as $order) {
-            $this->queueProcessor->process($order, Queue::ACTION_TYPE_ORDER);
+            try {
+                $this->queueProcessor->process($order, Queue::ACTION_TYPE_ORDER);
+            } catch (\Exception $e) {
+                $this->logger->error(__('There was an error when processing "order" action for order with id "%1", error: %2', $order->getId(), $e->getMessage()));
+            }
         }
 
         $this->logger->info('Cronjob SendOrder is finished.');
