@@ -4,9 +4,9 @@ namespace Mulberry\Warranty\Console\Command;
 
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
+use Magento\Framework\Console\Cli;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Mulberry\Warranty\Api\QueueProcessorInterface;
-use Mulberry\Warranty\Model\Processor\Queue;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -76,7 +76,7 @@ class RunOrder extends Command
      *
      * @return void
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $this->state->setAreaCode(Area::AREA_FRONTEND);
@@ -87,13 +87,17 @@ class RunOrder extends Command
             $order = $this->orderRepository->get($orderId);
 
             if ($this->queueProcessor->process($order, $actionType)) {
-                $output->writeln('<info>' . sprintf(self::MESSAGE_SUCCESS, '') . '</info>');
+                $output->writeln('<info>' . sprintf(self::MESSAGE_SUCCESS, __('ID - %1', $order->getId())) . '</info>');
             } else {
                 $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR,
                         __('There was an error with the order sync')) . '</error>');
             }
         } catch (\Exception $e) {
             $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR, $e->getMessage()) . '</error>');
+
+            return Cli::RETURN_FAILURE;
         }
+
+        return Cli::RETURN_SUCCESS;
     }
 }

@@ -78,6 +78,8 @@ class Crawl extends Command
     }
 
     /**
+     * @deprecated NOT USED.
+     *
      * {@inheritdoc}
      * @throws LocalizedException
      * @throws InvalidArgumentException
