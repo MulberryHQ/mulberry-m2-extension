@@ -15,7 +15,7 @@
             <schedule>* * * * *</schedule>
         </job>
         <job name="mulberry_warranty_send_cart" instance="Mulberry\Warranty\Cron\SendCart" method="execute">
-            <schedule>5 * * * *</schedule>
+            <schedule>*/10 * * * *</schedule>
         </job>
     </group>
 </config>
