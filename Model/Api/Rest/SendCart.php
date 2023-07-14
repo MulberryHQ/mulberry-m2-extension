@@ -144,6 +144,8 @@ class SendCart implements SendCartServiceInterface
     {
         $this->order = null;
         $this->itemsPayload = [];
+        $this->orderItems = [];
+        $this->warrantyItems = [];
     }
 
     /**

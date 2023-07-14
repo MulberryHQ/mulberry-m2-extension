@@ -1,6 +1,11 @@
 Mulberry_Warranty changelog
 ========================
 
+1.6.4:
+- Increased frequency for the post purchase orders
+- Fixed issue when incorrect order items were sent via post purchase/sendcart hook
+- Fixed return type for the CLI sync commands
+
 1.6.0:
 - Added event to perform partial refund aka creditmemo
 
