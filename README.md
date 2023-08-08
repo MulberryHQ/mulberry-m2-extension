@@ -61,6 +61,7 @@ When warranty information is retrieved from the Mulberry service, the product na
 - `mulberry-warranty-36-months`
 - `mulberry-warranty-48-months`
 - `mulberry-warranty-60-months`
+- `mulberry-warranty-120-months`
 
 To set a custom image for a warranty product, use the [default Magento product image functionality](https://docs.magento.com/m1/ce/user_guide/catalog/product-images.html).
 
@@ -81,7 +82,7 @@ In order to add a warranty product to the cart, as well as process it during the
 
 - `sales_quote_item_set_product` On this event, the module updates the product name of the warranty product (quote item).
 
-- `checkout_submit_all_after` On this event, the module runs the checkout success & post purchase hook. As soon as the order is placed, Magento makes an API call to the Mulberry platform, notifying it that the warranty product has been purchased. The API call is made only if the Magento order contains a warranty product.
+- `sales_order_place_after` On this event, the module runs the checkout success & post purchase hook. As soon as the order is placed and if the module is enabled, a corresponding record is added to the queue table and then sent to the Mulberry platform asynchronously.  Order sync is made only if the Magento order contains a warranty product.
 
 - `order_cancel_after` On this event, the module checks if there's any warranty product available on the order. If so, it sends Mulberry cancel API request.
 

@@ -17,19 +17,10 @@ use Mulberry\Warranty\Api\Rest\SendCartServiceInterface;
 
 class AddOrderToQueue implements ObserverInterface
 {
-    /**
-     * @var HelperInterface $configHelper
-     */
-    private $configHelper;
+    private HelperInterface $configHelper;
+    private QueueProcessorInterface $queueProcessor;
 
     /**
-     * @var QueueProcessorInterface $queueProcessor
-     */
-    private $queueProcessor;
-
-    /**
-     * SendCart constructor.
-     *
      * @param HelperInterface $configHelper
      * @param QueueProcessorInterface $queueProcessor
      */

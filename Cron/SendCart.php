@@ -13,28 +13,19 @@ namespace Mulberry\Warranty\Cron;
 use Mulberry\Warranty\Api\QueueProcessorInterface;
 use Mulberry\Warranty\Model\Processor\Queue;
 use Psr\Log\LoggerInterface;
-use Magento\Framework\Event\Observer;
-use Mulberry\Warranty\Api\Rest\SendOrderServiceInterface;
 
 class SendCart
 {
     /**
-     * Process 20 "order" action type records in a single cron run
+     * Process 20 "cart" action type records in a single cron run
      */
-    const BATCH_SIZE = 20;
+    const BATCH_SIZE = 100;
+
+    private LoggerInterface $logger;
+    private QueueProcessorInterface $queueProcessor;
 
     /**
-     * @var LoggerInterface $logger
-     */
-    private $logger;
-
-    /**
-     * @var QueueProcessorInterface $queueProcessor
-     */
-    private $queueProcessor;
-
-    /**
-     * SendOrder constructor.
+     * SendCart constructor.
      *
      * @param LoggerInterface $logger
      * @param QueueProcessorInterface $queueProcessor
@@ -48,7 +39,7 @@ class SendCart
     }
 
     /**
-     * @param Observer $observer
+     * @return void
      */
     public function execute()
     {
@@ -62,7 +53,7 @@ class SendCart
 
         foreach ($collection as $order) {
             try {
-                $this->queueProcessor->process($order, Queue::ACTION_TYPE_CART);
+                $this->queueProcessor->process($order, QueueProcessorInterface::ACTION_TYPE_CART);
             } catch (\Exception $e) {
                 $this->logger->error(__('There was an error when processing "cart" action for order with id "%1", error: %2', $order->getId(), $e->getMessage()));
             }

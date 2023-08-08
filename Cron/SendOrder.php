@@ -21,17 +21,10 @@ class SendOrder
     /**
      * Process 20 "order" action type records in a single cron run
      */
-    const BATCH_SIZE = 20;
+    const BATCH_SIZE = 50;
 
-    /**
-     * @var LoggerInterface $logger
-     */
-    private $logger;
-
-    /**
-     * @var QueueProcessorInterface $queueProcessor
-     */
-    private $queueProcessor;
+    private LoggerInterface $logger;
+    private QueueProcessorInterface $queueProcessor;
 
     /**
      * SendOrder constructor.
@@ -48,7 +41,7 @@ class SendOrder
     }
 
     /**
-     * @param Observer $observer
+     * @return void
      */
     public function execute()
     {
@@ -62,7 +55,7 @@ class SendOrder
 
         foreach ($collection as $order) {
             try {
-                $this->queueProcessor->process($order, Queue::ACTION_TYPE_ORDER);
+                $this->queueProcessor->process($order, QueueProcessorInterface::ACTION_TYPE_ORDER);
             } catch (\Exception $e) {
                 $this->logger->error(__('There was an error when processing "order" action for order with id "%1", error: %2', $order->getId(), $e->getMessage()));
             }

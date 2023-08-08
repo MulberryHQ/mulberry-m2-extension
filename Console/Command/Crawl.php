@@ -11,6 +11,7 @@ declare(strict_types=1);
 
 namespace Mulberry\Warranty\Console\Command;
 
+use Magento\Framework\Console\Cli;
 use Mulberry\Warranty\Model\Crawler;
 use InvalidArgumentException;
 use Magento\Framework\App\Area;
@@ -19,7 +20,6 @@ use Magento\Framework\Exception\LocalizedException;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Magento\Store\Model\Store;
 
 class Crawl extends Command
 {
@@ -43,14 +43,13 @@ class Crawl extends Command
      */
     const MESSAGE_ERROR = 'Error: %s';
 
-    /**
-     * @var State
-     */
-    private $state;
-
-    private $crawler;
+    private State $state;
+    private Crawler $crawler;
 
     /**
+     * @Deprecated - NOT IN USE.
+     * This command has been used in the initial module versions and is not performance-optimized.
+     *
      * RebuildCommand constructor
      *
      * @param State $state
@@ -84,7 +83,7 @@ class Crawl extends Command
      * @throws LocalizedException
      * @throws InvalidArgumentException
      */
-    protected function execute(InputInterface $input, OutputInterface $output): void
+    protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $this->state->getAreaCode();
@@ -93,22 +92,16 @@ class Crawl extends Command
         }
 
         try {
-            $crawledData = $this->crawlAll();
+            $crawledData = $this->crawler->exportProducts();
             $count = count($crawledData);
 
             $output->writeln('<info>' . sprintf(self::MESSAGE_SUCCESS, $count) . '</info>');
-        } catch (Exception $e) {
+        } catch (\Exception $e) {
             $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR, $e->getMessage()) . '</error>');
-        }
-    }
 
-    /**
-     * Gather catalog product data
-     *
-     * @return array
-     */
-    private function crawlAll(): array
-    {
-        return $this->crawler->exportProducts();
+            return Cli::RETURN_FAILURE;
+        }
+
+        return Cli::RETURN_SUCCESS;
     }
 }

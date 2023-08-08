@@ -9,6 +9,7 @@
 
 namespace Mulberry\Warranty\Observer;
 
+use Magento\Catalog\Api\Data\ProductInterface;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Model\Product;
 use Magento\Checkout\Model\Cart\RequestInfoFilterInterface;
@@ -29,55 +30,16 @@ use Psr\Log\LoggerInterface;
 
 class AddWarranty implements ObserverInterface
 {
-    /**
-     * @var RequestInterface $request
-     */
-    private $request;
-
-    /**
-     * @var ItemUpdater $warrantyItemUpdater
-     */
-    private $warrantyItemUpdater;
-
-    /**
-     * @var StoreManagerInterface $storeManager
-     */
-    private $storeManager;
-
-    /**
-     * @var ProductRepositoryInterface $productRepository
-     */
-    private $productRepository;
-
-    /**
-     * @var RequestInfoFilterInterface $requestInfoFilter
-     */
-    private $requestInfoFilter;
-
-    /**
-     * @var ManagerInterface $messageManager
-     */
-    private $messageManager;
-
-    /**
-     * @var HelperInterface $helper
-     */
-    private $helper;
-
-    /**
-     * @var ItemOptionInterface $helper
-     */
-    private $itemOptionHelper;
-
-    /**
-     * @var LoggerInterface $logger
-     */
-    private $logger;
-
-    /**
-     * @var UrlInterface $url
-     */
-    private $url;
+    private RequestInterface $request;
+    private ItemUpdater $warrantyItemUpdater;
+    private StoreManagerInterface $storeManager;
+    private ProductRepositoryInterface $productRepository;
+    private RequestInfoFilterInterface $requestInfoFilter;
+    private ManagerInterface $messageManager;
+    private HelperInterface $helper;
+    private ItemOptionInterface $itemOptionHelper;
+    private LoggerInterface $logger;
+    private UrlInterface $url;
 
     /**
      * AddWarranty constructor.
@@ -91,6 +53,7 @@ class AddWarranty implements ObserverInterface
      * @param HelperInterface $helper
      * @param ItemOptionInterface $itemOptionHelper
      * @param LoggerInterface $logger
+     * @param UrlInterface $url
      */
     public function __construct(
         RequestInterface $request,
@@ -265,10 +228,10 @@ class AddWarranty implements ObserverInterface
      * Retrieve Magento placeholder product to be used as a warranty product
      *
      * @param array $warrantyOptions
-     * @return \Magento\Catalog\Api\Data\ProductInterface
+     * @return ProductInterface
      * @throws NoSuchEntityException
      */
-    protected function getWarrantyPlaceholderProduct(array $warrantyOptions = [])
+    public function getWarrantyPlaceholderProduct(array $warrantyOptions = []): ProductInterface
     {
         $placeholderSku = (is_array($warrantyOptions) && isset($warrantyOptions['duration_months'])) ? sprintf('mulberry-warranty-%s-months', $warrantyOptions['duration_months']) : 'mulberry-warranty-product';
 

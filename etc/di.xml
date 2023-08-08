@@ -75,8 +75,8 @@
     <type name="Magento\Framework\Console\CommandListInterface">
         <arguments>
             <argument name="commands" xsi:type="array">
-                <item name="mulberry_warranty_crawl" xsi:type="object">Mulberry\Warranty\Console\Command\Crawl</item>
-                <item name="mulberry_warranty_run_order" xsi:type="object">Mulberry\Warranty\Console\Command\RunOrder</item>
+                <item name="mulberry_warranty_sync_order" xsi:type="object">Mulberry\Warranty\Console\Command\SyncOrder</item>
+                <item name="mulberry_warranty_sync_cart" xsi:type="object">Mulberry\Warranty\Console\Command\SyncCart</item>
             </argument>
         </arguments>
     </type>

@@ -91,16 +91,35 @@ class Queue implements QueueProcessorInterface
     /**
      * @inheritdoc
      */
-    public function addToQueue(OrderInterface $order, string $type): void
+    public function addToQueue(OrderInterface $order, string $type, bool $force = false): bool
     {
         /**
          * @var $queueModel QueueModel
          */
-        $queueModel = $this->queueFactory->create();
+        $queueModel = $this->queueRepository->getByOrderIdAndActionType($order->getId(), $type);
+
+        /**
+         * Skip adding record to the queue if no "force" flag is set.
+         */
+        if ($queueModel->getId() && !$force) {
+            return false;
+        }
+
+
         $queueModel->setOrderId($order->getId());
         $queueModel->setActionType($type);
 
+        /**
+         * Reset sync status field if order is force-added to the queue
+         */
+        if ($force) {
+            $queueModel->setSyncStatus(null);
+            $queueModel->setSyncDate(null);
+        }
+
         $this->queueRepository->save($queueModel);
+
+        return true;
     }
 
     /**
@@ -114,33 +133,34 @@ class Queue implements QueueProcessorInterface
              */
             $queue = $this->queueRepository->getByOrderIdAndActionType($order->getId(), $actionType);
 
-            if ($queue->getId()) {
-                switch ($actionType) {
-                    case self::ACTION_TYPE_ORDER:
-                        $result = $this->sendOrderService->sendOrder($order);
-                        break;
-                    case self::ACTION_TYPE_CART:
-                        $result = $this->sendCartService->sendCart($order);
-                        break;
-                    default:
-                        $result = [
-                            'status' => QueueInterface::STATUS_SKIPPED,
-                            'response' => __('Invalid action type for order "#%1"', $order->getIncrementId())
-                        ];
-                        break;
-                }
+            if (!$queue->getId()) {
+                $this->logger->error(__('Order with increment ID "%1" is not queued for action type "%2"', $order->getIncrementId(), $actionType));
 
-                $queue->setSyncStatus($result['status']);
-                $queue->setSyncDate($this->dateTimeFactory->create()->gmtDate());
-                $this->queueRepository->save($queue);
+                return false;
+            }
 
-                /**
-                 * Log the "error" message if the response status is not "synced"
-                 */
-                if ($result['status'] !== QueueInterface::STATUS_SYNCED) {
-                    $this->logger->error(json_encode($result));
-                    return false;
-                }
+            switch ($actionType) {
+                case self::ACTION_TYPE_ORDER:
+                    $result = $this->sendOrderService->sendOrder($order);
+                    break;
+                case self::ACTION_TYPE_CART:
+                    $result = $this->sendCartService->sendCart($order);
+                    break;
+                default:
+                    $result = [
+                        'status' => QueueInterface::STATUS_SKIPPED,
+                        'response' => __('Invalid action type for order "#%1"', $order->getIncrementId())
+                    ];
+                    break;
+            }
+
+            $queue->setSyncStatus($result['status']);
+            $queue->setSyncDate($this->dateTimeFactory->create()->gmtDate());
+            $this->queueRepository->save($queue);
+
+            if ($result['status'] !== QueueInterface::STATUS_SYNCED) {
+                $this->logger->error(__('Incorrect response sync status for order "%1", error: "%2', $order->getIncrementId(), json_encode($result)));
+                return false;
             }
         } catch (\Exception $e) {
             $this->logger->error(__('There was an error when processing order %1, error: %2', $order->getIncrementId(), $e->getMessage()));

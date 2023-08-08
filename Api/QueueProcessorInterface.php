@@ -26,24 +26,27 @@ interface QueueProcessorInterface
      *
      * @param OrderInterface $order
      * @param string $type
+     * @param bool $force
+     * @return void
      */
-    public function addToQueue(OrderInterface $order, string $type) : void;
+    public function addToQueue(OrderInterface $order, string $type, bool $force = false): bool;
 
     /**
      * Process Mulberry queue record
      *
-     * @param QueueInterface $queue
+     * @param OrderInterface $order
+     * @param $actionType
      * @return mixed
      */
-    public function process(OrderInterface $order, $actionType) : bool;
+    public function process(OrderInterface $order, $actionType): bool;
 
     /**
      * @return OrderCollection
      */
-    public function getOrdersToExport() : OrderCollection;
+    public function getOrdersToExport(): OrderCollection;
 
     /**
      * @return OrderCollection
      */
-    public function getCartsToExport() : OrderCollection;
+    public function getCartsToExport(): OrderCollection;
 }

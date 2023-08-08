@@ -16,10 +16,7 @@ use Magento\Sales\Api\Data\OrderInterface;
 
 class GenerateOrderUuid implements ObserverInterface
 {
-    /**
-     * @var IdentityGeneratorInterface
-     */
-    private $identityGenerator;
+    private IdentityGeneratorInterface $identityGenerator;
 
     /**
      * GenerateOrderUuid constructor.

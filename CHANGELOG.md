@@ -1,6 +1,16 @@
 Mulberry_Warranty changelog
 ========================
 
+2.0.0:
+- Increased number of orders to process during cron run
+-  Removed the outdated crawler command, added deprecation message
+- Separated   sync order & sync cart CLI commands
+- Orders are now synced using increment_id instead of entity_id  for better usability
+- Changed event observer for the orders to cover admin & phone orders
+- Added logic to be able  to force-add  records to the queue if needed outside the original module
+- Made  getWarrantyPlaceholderProduct function public to allow updating  Mulberry placeholder product SKUs  via plugin
+- Minor code cleanup
+
 1.6.4:
 - Increased frequency for the post purchase orders
 - Fixed issue when incorrect order items were sent via post purchase/sendcart hook
