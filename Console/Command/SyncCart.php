@@ -100,6 +100,6 @@ class SyncCart extends Command
             ->create();
         $orders = $this->orderRepository->getList($criteria)->getItems();
 
-        return count($orders)? $orders[0] : null;
+        return $orders ? current($orders) : null;
     }
 }
