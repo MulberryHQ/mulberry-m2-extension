@@ -1,6 +1,9 @@
 Mulberry_Warranty changelog
 ========================
 
+2.0.1:
+- Fixed checks for the item eligibility in post-purchase action
+
 2.0.0:
 - Increased number of orders to process during cron run
 -  Removed the outdated crawler command, added deprecation message

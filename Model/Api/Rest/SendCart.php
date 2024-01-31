@@ -192,10 +192,10 @@ class SendCart implements SendCartServiceInterface
      * Check if the item is eligible for the post purchase.
      *
      * @param array $itemDataArray
-     * @param $key
+     * @param $orderItemKey
      * @return bool
      */
-    private function isPostPurchaseEligible(array $itemDataArray, $key)
+    private function isPostPurchaseEligible(array $itemDataArray, $orderItemKey)
     {
         $item = $itemDataArray['item'];
 
@@ -218,7 +218,7 @@ class SendCart implements SendCartServiceInterface
          *
          * @var Item $warrantyItem
          */
-        foreach ($this->warrantyItems as $key => $warrantyItemArray) {
+        foreach ($this->warrantyItems as $warrantyItemKey => $warrantyItemArray) {
             $warrantyItem = $warrantyItemArray['item'];
             $associatedProduct = $warrantyItem->getBuyRequest()->getOriginalProduct();
             $associatedSku = $associatedProduct['product_sku'];
@@ -227,10 +227,10 @@ class SendCart implements SendCartServiceInterface
                 $warrantyItemArray['quantity'] = (int) $warrantyItemArray['quantity'] - 1;
 
                 if ((int) $warrantyItemArray['quantity'] < 1) {
-                    unset($this->warrantyItems[$key]);
+                    unset($this->warrantyItems[$warrantyItemKey]);
                 }
 
-                $this->orderItems[$key]['quantity'] = (int) $this->orderItems[$key]['quantity'] - 1;
+                $this->orderItems[$orderItemKey]['quantity'] = (int) $this->orderItems[$orderItemKey]['quantity'] - 1;
 
                 return false;
             }
