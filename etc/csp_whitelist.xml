@@ -3,32 +3,34 @@
     <policies>
         <policy id="script-src">
             <values>
-                <value id="mulberry" type="host">app.getmulberry.com</value>
-                <value id="mulberry-staging" type="host">app-staging.getmulberry.com</value>
+                <value id="mulberry" type="host">*.getmulberry.com</value>
             </values>
         </policy>
         <policy id="connect-src">
             <values>
-                <value id="mulberry" type="host">app.getmulberry.com</value>
-                <value id="mulberry-staging" type="host">app-staging.getmulberry.com</value>
+                <value id="mulberry" type="host">*.getmulberry.com</value>
+                <value id="mulberry-launchdarkly" type="host">app.launchdarkly.com</value>
+                <value id="mulberry-ga" type="host">*.google-analytics.com</value>
             </values>
         </policy>
         <policy id="frame-src">
             <values>
-                <value id="mulberry" type="host">app.getmulberry.com</value>
-                <value id="mulberry-staging" type="host">app-staging.getmulberry.com</value>
+                <value id="mulberry" type="host">*.getmulberry.com</value>
             </values>
         </policy>
         <policy id="img-src">
             <values>
-                <value id="mulberry" type="host">app.getmulberry.com</value>
-                <value id="mulberry-staging" type="host">app-staging.getmulberry.com</value>
+                <value id="mulberry" type="host">*.getmulberry.com</value>
             </values>
         </policy>
         <policy id="form-action">
             <values>
-                <value id="mulberry" type="host">app.getmulberry.com</value>
-                <value id="mulberry-staging" type="host">app-staging.getmulberry.com</value>
+                <value id="mulberry" type="host">*.getmulberry.com</value>
+            </values>
+        </policy>
+        <policy id="style-src">
+            <values>
+                <value id="mulberry" type="host">*.getmulberry.com</value>
             </values>
         </policy>
     </policies>

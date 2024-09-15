@@ -1,0 +1,31 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Magento\Framework\View\Element\Template;
+use Mulberry\Warranty\ViewModel\ConfigViewModel;
+/**
+ * @var $block Template
+ * @var $escaper Escaper
+ * @var $cartItemViewModel ConfigViewModel
+ */
+
+$cartItemViewModel = $block->getData('mulberryConfigViewModel');
+
+if (!$cartItemViewModel) {
+    return;
+}
+
+if (!$cartItemViewModel->canRender()) {
+    return;
+}
+?>
+<script type="text/javascript">
+    window.mulberryConfigData = {
+        "magentoDomain": "<?= $escaper->escapeHtml($cartItemViewModel->getPlatformDomain()); ?>",
+        "mulberryUrl": "<?= $escaper->escapeHtml($cartItemViewModel->getApiUrl()); ?>",
+        "partnerUrl": "<?= $escaper->escapeHtml($cartItemViewModel->getPartnerUrl()); ?>",
+        "retailerId": "<?= $escaper->escapeHtml($cartItemViewModel->getRetailerId()); ?>",
+        "publicToken": "<?= $escaper->escapeHtml($cartItemViewModel->getPublicToken()); ?>"
+    }
+</script>

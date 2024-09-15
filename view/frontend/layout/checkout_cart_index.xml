@@ -1,0 +1,29 @@
+<?xml version="1.0"?>
+<!--
+/**
+ * @category Mulberry
+ * @package Mulberry\Warranty
+ * @author Mulberry <support@getmulberry.com>
+ * @copyright Copyright (c) 2024 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ */
+-->
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="mulberry_warranty_config"/>
+
+    <body>
+        <referenceBlock name="additional.product.info">
+            <block name="mulberry.warranty.container"
+                   class="Magento\Checkout\Block\Cart\Item\Renderer"
+                   template="Mulberry_Warranty::cart/item/container.phtml">
+                <arguments>
+                    <argument name="mulberryCartItemViewModel" xsi:type="object">
+                        Mulberry\Warranty\ViewModel\CartItemViewModel
+                    </argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+    </body>
+</page>
+

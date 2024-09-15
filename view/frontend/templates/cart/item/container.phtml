@@ -1,0 +1,63 @@
+<?php
+declare(strict_types=1);
+
+use Magento\Checkout\Block\Cart\Item\Renderer;
+use Magento\Framework\Escaper;
+use Mulberry\Warranty\ViewModel\CartItemViewModel;
+
+/**
+ * @var $block Renderer
+ * @var $escaper Escaper
+ * @var $cartItemViewModel CartItemViewModel
+ */
+
+$quoteItem = $block->getItem();
+$product = $quoteItem->getProduct();
+$cartItemViewModel = $block->getData('mulberryCartItemViewModel');
+
+if (!$cartItemViewModel) {
+    return;
+}
+
+$isEnabled = $cartItemViewModel->isShoppingCartOffersEnabled();
+
+if (!$isEnabled) {
+    return;
+}
+
+$isEligible = $cartItemViewModel->isEligible($quoteItem);
+
+if (!$isEligible) {
+    return;
+}
+?>
+
+<div
+    class="mulberry-cart-container"
+    id="mulberry-cart-container-<?= $escaper->escapeHtmlAttr($quoteItem->getId()) ?>"
+    data-layout="button-dark"
+></div>
+
+<script type="text/x-magento-init">
+{
+    "#mulberry-cart-container-<?= $escaper->escapeHtmlAttr($quoteItem->getId()) ?>": {
+        "mulberryCartItem": {
+            "itemId": "<?= $escaper->escapeHtmlAttr($quoteItem->getId()) ?>",
+            "sku": "<?= $escaper->escapeJs($quoteItem->getSku()) ?>",
+            "addToCartUrl" : "<?= $escaper->escapeUrl($block->getUrl('mulberry/cart/add')) ?>",
+            "reloadOnSuccess": true,
+            "product": {
+                "id": "<?= $escaper->escapeJs($quoteItem->getSku()) ?>",
+                "title": "<?= $escaper->escapeJs($quoteItem->getName()) ?>",
+                "price": "<?= (float) $escaper->escapeJs($quoteItem->getPrice()) ?>",
+                "url": "<?= $block->getProductUrl() ?>",
+                "images": <?= $cartItemViewModel->getGalleryImagesInfo($quoteItem); ?>,
+                "meta": {
+                    "breadcrumbs": <?= $cartItemViewModel->getBreadcrumbsInfo($quoteItem); ?>
+                },
+                "description": "<?= $block->escapeHtml($cartItemViewModel->getProductDescription($quoteItem)); ?>"
+            }
+        }
+    }
+}
+</script>

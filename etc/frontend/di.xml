@@ -17,4 +17,10 @@
             </argument>
         </arguments>
     </type>
+
+    <type name="Mulberry\Warranty\Controller\Cart\Add">
+        <arguments>
+            <argument name="checkoutSession" xsi:type="object">Magento\Checkout\Model\Session\Proxy</argument>
+        </arguments>
+    </type>
 </config>

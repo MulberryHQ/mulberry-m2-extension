@@ -1,12 +1,12 @@
 <?php
+declare(strict_types=1);
 /**
  * @category Mulberry
  * @package Mulberry\Warranty
  * @author Mulberry <support@getmulberry.com>
- * @copyright Copyright (c) 2021 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @copyright Copyright (c) 2024 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
  * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
  */
-declare(strict_types=1);
 
 namespace Mulberry\Warranty\Model\Processor;
 
@@ -28,37 +28,37 @@ class Queue implements QueueProcessorInterface
     /**
      * @var QueueRepositoryInterface $queueRepository
      */
-    private $queueRepository;
+    private QueueRepositoryInterface $queueRepository;
 
     /**
      * @var QueueFactory $queueFactory
      */
-    private $queueFactory;
+    private QueueFactory $queueFactory;
 
     /**
      * @var SendOrderServiceInterface $sendOrderService
      */
-    private $sendOrderService;
+    private SendOrderServiceInterface $sendOrderService;
 
     /**
      * @var SendCartServiceInterface $sendCartService
      */
-    private $sendCartService;
+    private SendCartServiceInterface $sendCartService;
 
     /**
      * @var CollectionFactory $orderCollectionFactory
      */
-    private $orderCollectionFactory;
+    private CollectionFactory $orderCollectionFactory;
 
     /**
      * @var DateTimeFactory $dateTimeFactory
      */
-    private $dateTimeFactory;
+    private DateTimeFactory $dateTimeFactory;
 
     /**
      * @var LoggerInterface $logger
      */
-    private $logger;
+    private LoggerInterface $logger;
 
     /**
      * Queue constructor.
@@ -94,6 +94,13 @@ class Queue implements QueueProcessorInterface
     public function addToQueue(OrderInterface $order, string $type, bool $force = false): bool
     {
         /**
+         * Skip this when order is not saved yet
+         */
+        if (!$order->getId()) {
+            return false;
+        }
+
+        /**
          * @var $queueModel QueueModel
          */
         $queueModel = $this->queueRepository->getByOrderIdAndActionType($order->getId(), $type);
@@ -104,7 +111,6 @@ class Queue implements QueueProcessorInterface
         if ($queueModel->getId() && !$force) {
             return false;
         }
-
 
         $queueModel->setOrderId($order->getId());
         $queueModel->setActionType($type);

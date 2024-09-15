@@ -20,14 +20,18 @@ define([
          * @private
          */
         loadLibrary: function () {
+            const scriptSource = window.mulberryConfigData.mulberryUrl + '/plugin/static/js/mulberry.js';
 
-            var element = document.createElement('script'),
-                scriptTag = document.getElementsByTagName('script')[0],
-                mulberryUrl = window.mulberryConfigData.mulberryUrl;
+            const pendingLoadScript = Array.from(document.scripts).find(script => script.src === scriptSource);
+            if (pendingLoadScript) { // GetMulberry SDK script load is pending being loaded
+                return;
+            }
+
+            let element = document.createElement('script'),
+                scriptTag = document.getElementsByTagName('script')[0];
 
             element.async = true;
-            element.src = mulberryUrl + '/plugin/static/js/mulberry.js';
-
+            element.src = scriptSource;
             element.onload = function () {
                 require(['mulberry'], function (lib) {
                     window.mulberry = lib;
@@ -35,7 +39,7 @@ define([
 
             };
 
-            scriptTag.parentNode.insertBefore(element, scriptTag);
+            document.head.appendChild(element);
         }
     };
 });

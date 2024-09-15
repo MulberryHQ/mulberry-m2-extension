@@ -1,4 +1,6 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @category Mulberry
  * @package Mulberry\Warranty
@@ -27,11 +29,12 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     const XML_PATH_PUBLIC_TOKEN = 'mulberry_warranty/general/public_token';
     const XML_PATH_SEND_CART_DATA = 'mulberry_warranty/general/send_cart_data';
     const XML_PATH_ENABLE_FORCE_LOGGING = 'mulberry_warranty/general/enable_force_logging';
+    const XML_PATH_ENABLE_CART_OFFERS = 'mulberry_warranty/general/enable_cart_offers';
 
     /**
      * {@inheritdoc}
      */
-    public function isActive()
+    public function isActive(): bool
     {
         return (bool)$this->scopeConfig->getValue(
             self::XML_PATH_IS_ACTIVE,
@@ -42,7 +45,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     /**
      * {@inheritdoc}
      */
-    public function getApiUrl()
+    public function getApiUrl(): string
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_API_URL,
@@ -53,7 +56,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     /**
      * {@inheritdoc}
      */
-    public function getPartnerUrl()
+    public function getPartnerUrl(): ?string
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_PARTNER_URL,
@@ -64,7 +67,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     /**
      * {@inheritdoc}
      */
-    public function getPlatformDomain()
+    public function getPlatformDomain(): ?string
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_PLATFORM_DOMAIN,
@@ -75,7 +78,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     /**
      * {@inheritdoc}
      */
-    public function getRetailerId()
+    public function getRetailerId(): ?string
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_RETAILER_ID,
@@ -86,7 +89,7 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     /**
      * {@inheritdoc}
      */
-    public function getApiToken()
+    public function getApiToken(): ?string
     {
         return $this->scopeConfig->getValue(
             self::XML_PATH_PRIVATE_TOKEN,
@@ -97,9 +100,9 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     /**
      * {@inheritDoc}
      */
-    public function isSendCartDataEnabled()
+    public function isSendCartDataEnabled(): bool
     {
-        return $this->scopeConfig->getValue(
+        return (bool)$this->scopeConfig->getValue(
             self::XML_PATH_SEND_CART_DATA,
             ScopeInterface::SCOPE_WEBSITE
         );
@@ -119,10 +122,21 @@ class ConfigHelper extends AbstractHelper implements HelperInterface
     /**
      * {@inheritdoc}
      */
-    public function isForceLoggingEnabled()
+    public function isForceLoggingEnabled(): bool
     {
-        return $this->scopeConfig->getValue(
+        return (bool)$this->scopeConfig->getValue(
             self::XML_PATH_ENABLE_FORCE_LOGGING,
+            ScopeInterface::SCOPE_WEBSITE
+        );
+    }
+
+    /**
+     * {@inheritdoc}
+     */
+    public function cartOffersEnabled(): bool
+    {
+        return (bool)$this->scopeConfig->getValue(
+            self::XML_PATH_ENABLE_CART_OFFERS,
             ScopeInterface::SCOPE_WEBSITE
         );
     }

@@ -16,42 +16,42 @@ interface HelperInterface
      *
      * @return bool
      */
-    public function isActive();
+    public function isActive(): bool;
 
     /**
      * Retrieve API URL required for Mulberry JS requests
      *
      * @return string
      */
-    public function getApiUrl();
+    public function getApiUrl(): string;
 
     /**
      * Mulberry partner URL
      *
      * @return null|string
      */
-    public function getPartnerUrl();
+    public function getPartnerUrl(): ?string;
 
     /**
      * Mulberry platform domain name used within API
      *
      * @return null|string
      */
-    public function getPlatformDomain();
+    public function getPlatformDomain(): ?string;
 
     /**
      * Mulberry retailer ID for order payload
      *
      * @return null|string
      */
-    public function getRetailerId();
+    public function getRetailerId(): ?string;
 
     /**
      * API auth token that is used for calls
      *
      * @return null|string
      */
-    public function getApiToken();
+    public function getApiToken(): ?string;
 
     /**
      * Returns public token used to initialize offer on the FE
@@ -65,7 +65,7 @@ interface HelperInterface
      *
      * @return mixed
      */
-    public function isSendCartDataEnabled();
+    public function isSendCartDataEnabled(): bool;
 
     /**
      * Yes/No flag to force log Mulberry API request/response information
@@ -73,4 +73,11 @@ interface HelperInterface
      * @return mixed
      */
     public function isForceLoggingEnabled();
+
+    /**
+     * Yes/No flag for the cart placements display
+     *
+     * @return bool
+     */
+    public function cartOffersEnabled(): bool;
 }
