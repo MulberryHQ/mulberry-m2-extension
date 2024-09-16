@@ -1,11 +1,24 @@
 <?php
+declare(strict_types=1);
+
+use Magento\Framework\Escaper;
+use Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container;
+use Mulberry\Warranty\ViewModel\ConfigViewModel;
 /**
- * @category Mulberry
- * @package Mulberry\Warranty
- * @author Mulberry <support@getmulberry.com>
- * @copyright Copyright (c) 2019 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
- * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
+ * @var $block Container
+ * @var $escaper Escaper
+ * @var $cartItemViewModel ConfigViewModel
  */
+
+$cartItemViewModel = $block->getData('mulberryConfigViewModel');
+
+if (!$cartItemViewModel) {
+    return;
+}
+
+if (!$cartItemViewModel->canRender()) {
+    return;
+}
 ?>
 
 <?php
@@ -54,15 +67,6 @@
                 description: "<?= $block->escapeHtml($block->getProductDescription()); ?>"
             }
         };
-
-        window.mulberryConfigData = {
-            "containerClass": "mulberry-inline-container",
-            "magentoDomain": "<?= $block->getPlatformDomain(); ?>",
-            "mulberryUrl": "<?= $block->getApiUrl(); ?>",
-            "partnerUrl": "<?= $block->getPartnerUrl(); ?>",
-            "retailerId": "<?= $block->getRetailerId(); ?>",
-            "publicToken": "<?= $block->getPublicToken(); ?>"
-        }
     </script>
     <script type="text/x-magento-init">
         {

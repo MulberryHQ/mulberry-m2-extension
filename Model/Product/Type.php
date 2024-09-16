@@ -1,9 +1,11 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @category Mulberry
  * @package Mulberry\Warranty
  * @author Mulberry <support@getmulberry.com>
- * @copyright Copyright (c) 2019 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @copyright Copyright (c) 2024 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
  * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
  */
 
@@ -14,10 +16,12 @@ use Magento\Catalog\Model\Product\Option;
 use Magento\Catalog\Model\Product\Type\AbstractType;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Eav\Model\Config;
+use Magento\Framework\DataObject;
 use Magento\Framework\Event\ManagerInterface;
 use Magento\Framework\File\UploaderFactory;
 use Magento\Framework\Filesystem;
 use Magento\Framework\Message\ManagerInterface as MessageManager;
+use Magento\Framework\Phrase;
 use Magento\Framework\Registry;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\MediaStorage\Helper\File\Storage\Database;
@@ -30,7 +34,7 @@ class Type extends AbstractType
     /**
      * @var MessageManager $messageManager
      */
-    private $messageManager;
+    private MessageManager $messageManager;
 
     public function __construct(
         Option $catalogProductOption,
@@ -88,14 +92,21 @@ class Type extends AbstractType
     // @codingStandardsIgnoreEnd
 
     /**
-     * @return \Magento\Framework\Phrase
+     * @inheritDoc
      */
     public function getSpecifyOptionMessage()
     {
         return __('A warranty product does not have the associated product.');
     }
 
-    protected function _prepareProduct(\Magento\Framework\DataObject $buyRequest, $product, $processMode)
+    /**
+     * @param DataObject $buyRequest
+     * @param $product
+     * @param $processMode
+     *
+     * @return array|Product[]|Phrase|string
+     */
+    protected function _prepareProduct(DataObject $buyRequest, $product, $processMode)
     {
         $result = parent::_prepareProduct($buyRequest, $product, $processMode);
 
@@ -110,10 +121,11 @@ class Type extends AbstractType
     }
 
     /**
-     * @param $buyRequest
+     * @param DataObject $buyRequest
+     *
      * @return bool
      */
-    protected function warrantyHasAssociatedProduct($buyRequest)
+    protected function warrantyHasAssociatedProduct(DataObject $buyRequest): bool
     {
         return $buyRequest->getWarrantyProduct() && $buyRequest->getOriginalProduct();
     }

@@ -12,9 +12,6 @@ namespace Mulberry\Warranty\Block\Catalog\Product\View\Warranty;
 use Magento\Catalog\Api\ProductRepositoryInterface;
 use Magento\Catalog\Block\Product\Context;
 use Magento\Catalog\Block\Product\View;
-use Magento\Catalog\Helper\Data;
-use Magento\Catalog\Model\Product\Image\UrlBuilder;
-use Magento\Framework\Data\Collection;
 use Magento\Framework\Json\EncoderInterface as JsonEncoder;
 use Magento\Framework\Stdlib\StringUtils;
 use Magento\Framework\Url\EncoderInterface;
@@ -143,23 +140,17 @@ class Container extends View
     }
 
     /**
-     * @param $product
      * @return string
      */
-    public function getProductDescription()
+    public function getProductDescription(): string
     {
-        $product = $this->getProduct();
-        $description = $product->getMetaDescription() ? $product->getMetaDescription() : $product->getDescription();
-        $description = $this->stripTags($product->getDescription()); // Strip HTML tags
-        $description = str_replace(["\r", "\n"], '', $description); // Remove new lines
-
-        return $this->string->substr($description, 0, 255);
+        return $this->mulberryProductHelper->getProductDescription($this->getProduct());
     }
 
     /**
      * @return string
      */
-    public function getGalleryImagesInfo()
+    public function getGalleryImagesInfo(): string
     {
         return $this->_jsonEncoder->encode($this->mulberryProductHelper->getGalleryImagesInfo($this->getProduct()));
     }
@@ -167,7 +158,7 @@ class Container extends View
     /**
      * @return string
      */
-    public function getBreadcrumbsInfo()
+    public function getBreadcrumbsInfo(): string
     {
         return $this->_jsonEncoder->encode($this->mulberryProductHelper->getProductBreadcrumbs($this->getProduct()));
     }

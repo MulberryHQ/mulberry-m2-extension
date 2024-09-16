@@ -179,10 +179,10 @@ class Service implements ServiceInterface
      * @param $request
      * @param $response
      * @param $url
-     * @param $useDebug
+     *
      * @return void
      */
-    private function logRequestResponse($request, $response, $url, $force = false)
+    private function logRequestResponse($request, $response, $url)
     {
         $req = [
             'headers' => $this->headers,

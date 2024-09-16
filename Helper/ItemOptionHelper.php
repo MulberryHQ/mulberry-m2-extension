@@ -27,17 +27,17 @@ class ItemOptionHelper extends AbstractHelper implements ItemOptionInterface
     /**
      * @var Json $serializer
      */
-    private $serializer;
+    private Json $serializer;
 
     /**
      * @var WarrantyServiceInterface $warrantyService
      */
-    private $warrantyService;
+    private WarrantyServiceInterface $warrantyService;
 
     /**
      * @var array $warrantyInformationCache
      */
-    private $warrantyInformationCache = [];
+    private array $warrantyInformationCache = [];
 
     /**
      * ItemOptionHelper constructor.
@@ -109,6 +109,7 @@ class ItemOptionHelper extends AbstractHelper implements ItemOptionInterface
         $originalProductBuyRequest = $originalQuoteItem->getBuyRequest();
 
         return [
+            'item_id' => $originalQuoteItem->getId(),
             'product' => $originalProductBuyRequest->getProduct(),
             'product_sku' => $originalQuoteItem->getSku(),
             'product_name' => $originalQuoteItem->getName(),

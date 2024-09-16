@@ -1,6 +1,13 @@
 Mulberry_Warranty changelog
 ========================
 
+3.0.0:
+- BREAKING CHANGES - Reworked "Add Warranty" observer by decoupling a corresponding functionality and moving it into a separate processor class
+- Added functionality for the shopping cart placements
+- Moved some re-usable functions to the view models, so they can be used in Hyva Themes, if necessary
+- Moved Mulberry SDK config init to the separate template
+- Minor code cleanup
+
 2.0.1:
 - Fixed checks for the item eligibility in post-purchase action
 

@@ -21,19 +21,19 @@ class ItemUpdater extends AbstractHelper implements ItemUpdaterInterface
     /**
      * @var Json $serializer
      */
-    private $serializer;
+    private Json $serializer;
 
     /**
      * @var ItemOptionHelper $itemOptionHelper
      */
-    private $itemOptionHelper;
+    private ItemOptionHelper $itemOptionHelper;
 
     /**
      * List of attributes to be displayed as "Additional Options" within warranty item
      *
      * @var array $warrantyAdditionalOptions
      */
-    protected $warrantyAdditionalOptions = [
+    protected array $warrantyAdditionalOptions = [
         'service_type',
         'duration_months',
     ];
@@ -80,7 +80,6 @@ class ItemUpdater extends AbstractHelper implements ItemUpdaterInterface
     {
         $warrantyQuoteItem->setCustomPrice($options['warranty_product']['warranty_price']);
         $warrantyQuoteItem->setOriginalCustomPrice($options['warranty_product']['warranty_price']);
-        $warrantyQuoteItem->getProduct()->setIsSuperMode(true);
 
         return $warrantyQuoteItem;
     }

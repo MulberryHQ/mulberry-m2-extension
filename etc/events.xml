@@ -4,12 +4,12 @@
  * @category Mulberry
  * @package Mulberry\Warranty
  * @author Mulberry <support@getmulberry.com>
- * @copyright Copyright (c) 2019 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @copyright Copyright (c) 2024 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
  * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
  */
 -->
 <config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:Event/etc/events.xsd">
-    <event name="checkout_cart_product_add_after">
+    <event name="checkout_cart_add_product_complete">
         <observer name="add_warranty_product" instance="Mulberry\Warranty\Observer\AddWarranty"/>
     </event>
     <event name="sales_quote_item_set_product">

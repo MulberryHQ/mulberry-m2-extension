@@ -10,7 +10,8 @@ var config = {
     map: {
         '*': {
             "mulberryLibrary": 'Mulberry_Warranty/js/mulberry-library',
-            "mulberryProductPage": 'Mulberry_Warranty/js/mulberry-product-page'
+            "mulberryProductPage": 'Mulberry_Warranty/js/mulberry-product-page',
+            "mulberryCartItem": 'Mulberry_Warranty/js/cart/mulberry-cart-item',
         }
     },
     config: {

@@ -23,6 +23,7 @@
     <preference for="Mulberry\Warranty\Api\QueueRepositoryInterface" type="Mulberry\Warranty\Model\QueueRepository"/>
     <preference for="Mulberry\Warranty\Api\Data\QueueInterface" type="Mulberry\Warranty\Model\Data\Queue"/>
     <preference for="Mulberry\Warranty\Api\QueueProcessorInterface" type="Mulberry\Warranty\Model\Processor\Queue"/>
+    <preference for="Mulberry\Warranty\Api\AddWarrantyProcessorInterface" type="Mulberry\Warranty\Model\Processor\AddWarranty"/>
 
     <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
         <plugin name="MulberryConfigurableProductExtend" type="Mulberry\Warranty\Plugin\ConfigurablePlugin"/>

@@ -4,20 +4,43 @@
  * @category Mulberry
  * @package Mulberry\Warranty
  * @author Mulberry <support@getmulberry.com>
- * @copyright Copyright (c) 2019 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @copyright Copyright (c) 2024 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
  * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
  */
 -->
-<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+<page xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+      xsi:noNamespaceSchemaLocation="urn:magento:framework:View/Layout/etc/page_configuration.xsd">
+    <update handle="mulberry_warranty_config"/>
+
     <body>
         <!-- No Custom Options -->
         <referenceContainer name="product.info.form.content">
-            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container" name="warranty.product.container.no.options" after="product.info.addtocart" template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml" />
+            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container"
+                   name="warranty.product.container.no.options"
+                   after="product.info.addtocart"
+                   template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml"
+            >
+                <arguments>
+                    <argument name="mulberryConfigViewModel" xsi:type="object">
+                        Mulberry\Warranty\ViewModel\ConfigViewModel
+                    </argument>
+                </arguments>
+            </block>
         </referenceContainer>
 
         <!-- With Custom Options -->
         <referenceContainer name="product.info.form.options">
-            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container" name="warranty.product.container.with.options" after="product.info.addtocart.additional" template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml" />
+            <block class="Mulberry\Warranty\Block\Catalog\Product\View\Warranty\Container"
+                   name="warranty.product.container.with.options"
+                   after="product.info.addtocart.additional"
+                   template="Mulberry_Warranty::catalog/product/view/warranty/container.phtml"
+            >
+                <arguments>
+                    <argument name="mulberryConfigViewModel" xsi:type="object">
+                        Mulberry\Warranty\ViewModel\ConfigViewModel
+                    </argument>
+                </arguments>
+            </block>
         </referenceContainer>
     </body>
 </page>

@@ -1,49 +1,50 @@
 <?php
+declare(strict_types=1);
+
 /**
  * @category Mulberry
  * @package Mulberry\Warranty
  * @author Mulberry <support@getmulberry.com>
- * @copyright Copyright (c) 2022 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
+ * @copyright Copyright (c) 2024 Mulberry Technology Inc., Ltd (http://www.getmulberry.com)
  * @license http://opensource.org/licenses/OSL-3.0 The Open Software License 3.0 (OSL-3.0)
  */
 
 namespace Mulberry\Warranty\Helper;
 
 use Magento\Catalog\Api\Data\ProductInterface;
-use Magento\Catalog\Model\Product;
-use Magento\Framework\App\Helper\AbstractHelper;
-use Magento\Framework\App\Helper\Context;
-use Magento\Framework\Serialize\Serializer\Json;
-use Magento\Quote\Model\Quote\Item;
 use Magento\Framework\Data\Collection;
+use Magento\Framework\Filter\FilterManager;
+use Magento\Framework\Stdlib\StringUtils;
 use Mulberry\Warranty\Api\ProductHelperInterface;
 use Magento\Catalog\Model\Product\Image\UrlBuilder;
-use Magento\Catalog\Helper\Data;
-use Magento\Framework\Json\EncoderInterface as JsonEncoder;
 
-class ProductHelper extends AbstractHelper implements ProductHelperInterface
+class ProductHelper implements ProductHelperInterface
 {
+    private UrlBuilder $imageUrlBuilder;
+    private StringUtils $stringUtils;
+    private FilterManager $filterManager;
+
     /**
      * ProductHelper constructor.
      *
-     * @param Context $context
-     * @param Data $catalogHelper
      * @param UrlBuilder $imageUrlBuilder
+     * @param StringUtils $stringUtils
+     * @param FilterManager $filterManager
      */
-    public function __construct(Context $context,
-        Data $catalogHelper,
-        UrlBuilder $imageUrlBuilder
+    public function __construct(
+        UrlBuilder $imageUrlBuilder,
+        StringUtils $stringUtils,
+        FilterManager $filterManager
     ) {
-
-        $this->catalogHelper = $catalogHelper;
         $this->imageUrlBuilder = $imageUrlBuilder;
+        $this->stringUtils = $stringUtils;
+        $this->filterManager = $filterManager;
     }
 
     /**
-     * @param ProductInterface $product
-     * @return mixed
+     * @inheritDoc
      */
-    public function getProductBreadcrumbs(ProductInterface $product)
+    public function getProductBreadcrumbs(ProductInterface $product): array
     {
         $result = [];
         $categories = $product->getCategoryCollection()->addAttributeToSelect('name');
@@ -59,14 +60,13 @@ class ProductHelper extends AbstractHelper implements ProductHelperInterface
     }
 
     /**
-     * @param ProductInterface $product
-     * @return mixed
+     * @inheritDoc
      */
-    public function getGalleryImagesInfo(ProductInterface $product)
+    public function getGalleryImagesInfo(ProductInterface $product): array
     {
         $result = [];
         $images = $product->getMediaGalleryImages();
-        if (!$images instanceof \Magento\Framework\Data\Collection) {
+        if (!$images instanceof Collection) {
             return $images;
         }
 
@@ -82,5 +82,33 @@ class ProductHelper extends AbstractHelper implements ProductHelperInterface
         }
 
         return $result;
+    }
+
+    /**
+     * @inheritDoc
+     */
+    public function getProductDescription(ProductInterface $product): string
+    {
+        $description = $product->getMetaDescription() ? $product->getMetaDescription() : $product->getDescription();
+        $description = $this->stripTags($product->getDescription()); // Strip HTML tags
+        $description = str_replace(["\r", "\n"], '', $description); // Remove new lines
+
+        return $this->stringUtils->substr($description, 0, 255);
+    }
+
+    /**
+     * Copied over from \Magento\Framework\View\Element\AbstractBlock
+     *
+     * @param $data
+     * @param $allowableTags
+     * @param bool $allowHtmlEntities
+     *
+     * @return string
+     */
+    private function stripTags($data, $allowableTags = null, bool $allowHtmlEntities = false): string
+    {
+        $params = ['allowableTags' => $allowableTags, 'escape' => $allowHtmlEntities];
+
+        return $data ? $this->filterManager->stripTags($data, $params) : '';
     }
 }
