@@ -3,7 +3,7 @@
   "type": "magento2-module",
   "description": "GetMulberry.com Magento module",
   "license": "proprietary",
-  "version": "3.0.0",
+  "version": "3.0.1",
   "support": {
     "source": "https://github.com/MulberryHQ/mulberry-m2-extension.git"
   },
