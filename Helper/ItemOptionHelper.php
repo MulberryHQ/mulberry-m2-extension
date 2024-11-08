@@ -12,6 +12,7 @@ namespace Mulberry\Warranty\Helper;
 use Magento\Framework\App\Helper\AbstractHelper;
 use Magento\Framework\App\Helper\Context;
 use Magento\Framework\DataObject;
+use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Serialize\Serializer\Json;
 use Magento\Quote\Model\Quote\Item;
 use Mulberry\Warranty\Api\ItemOptionInterface;
@@ -85,12 +86,16 @@ class ItemOptionHelper extends AbstractHelper implements ItemOptionInterface
      * @param $warrantyHash
      *
      * @return array
+     *
+     * @throws LocalizedException
      */
     public function prepareWarrantyInformation($warrantyHash): array
     {
         if (!array_key_exists($warrantyHash, $this->warrantyInformationCache)) {
             if ($warrantyInfo = $this->warrantyService->getWarrantyByHash($warrantyHash)) {
                 $this->warrantyInformationCache[$warrantyHash] = $warrantyInfo;
+            } else {
+                throw new LocalizedException(__('Warranty information for "%1" is not found.', $warrantyHash));
             }
         }
 

@@ -19,12 +19,10 @@ use Magento\Framework\Data\Form\FormKey\Validator as FormKeyValidator;
 use Magento\Framework\Exception\LocalizedException;
 use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Framework\Message\ManagerInterface as MessageManagerInterface;
-use Magento\Quote\Api\Data\CartInterface;
 use Magento\Quote\Api\Data\CartItemInterface;
 use Mulberry\Warranty\Api\AddWarrantyProcessorInterface;
 use Psr\Log\LoggerInterface;
 use Magento\Checkout\Model\Session as CheckoutSession;
-use Magento\Quote\Model\Quote;
 
 class Add implements HttpPostActionInterface
 {
@@ -110,23 +108,27 @@ class Add implements HttpPostActionInterface
                 $this->getSanitizedWarrantyParams()
             );
 
-            if ($this->request->getParam('force_page_reload', false) === 'true') {
-                if ($addedWarrantyItem instanceof CartItemInterface) {
-                    $this->messageManager->addComplexSuccessMessage(
-                        'addCartSuccessMessage',
-                        [
-                            'product_name' => $addedWarrantyItem->getName(),
-                            'cart_url' => $this->cartHelper->getCartUrl(),
-                        ]
-                    );
-                }
-            }
+            if ($addedWarrantyItem instanceof CartItemInterface) {
+                $this->messageManager->addComplexSuccessMessage(
+                    'addCartSuccessMessage',
+                    [
+                        'product_name' => $addedWarrantyItem->getName(),
+                        'cart_url' => $this->cartHelper->getCartUrl(),
+                    ]
+                );
 
-            $result = [
-                'status' => true,
-                'force_page_reload' => $this->request->getParam('force_page_reload', false) === 'true',
-                'message' => __('Product warranty was added successfully.'),
-            ];
+                $result = [
+                    'status' => true,
+                    'force_page_reload' => $this->request->getParam('force_page_reload', false) === 'true',
+                    'message' => __('Product warranty was added successfully.'),
+                ];
+            } else {
+                $result = [
+                    'status' => false,
+                    'force_page_reload' => $this->request->getParam('force_page_reload', false) === 'true',
+                    'message' => __('There was an error adding the product warranty.'),
+                ];
+            }
         } catch (\Exception $e) {
             $this->logger->error('Error adding product warranty: ' . $e->getMessage());
             $result = [

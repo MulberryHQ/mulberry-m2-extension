@@ -1,6 +1,10 @@
 Mulberry_Warranty changelog
 ========================
 
+3.0.1:
+- Fixed issue in message handling
+- Minor cleanup
+
 3.0.0:
 - BREAKING CHANGES - Reworked "Add Warranty" observer by decoupling a corresponding functionality and moving it into a separate processor class
 - Added functionality for the shopping cart placements
