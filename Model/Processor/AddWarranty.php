@@ -91,6 +91,7 @@ class AddWarranty implements AddWarrantyProcessorInterface
          * @var Product $warrantyProduct
          */
         $warrantyProduct = $this->getWarrantyPlaceholderProduct($warrantyOptions);
+        $warrantyProduct->setData('salable', true); // skip salable checks
 
         $this->warrantyItemUpdater->addWarrantyItemOption($warrantyProduct, $options);
         $this->warrantyItemUpdater->addAdditionalOptions($warrantyProduct, $warrantyOptions);
