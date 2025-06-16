@@ -21,7 +21,7 @@
     <preference for="Mulberry\Warranty\Api\Rest\GetPersonalizedWarrantyServiceInterface" type="Mulberry\Warranty\Model\Api\Rest\GetPersonalizedWarranty"/>
     <preference for="Magento\Catalog\Block\Product\View\Options" type="Mulberry\Warranty\Block\Product\View\Options"/>
     <preference for="Mulberry\Warranty\Api\QueueRepositoryInterface" type="Mulberry\Warranty\Model\QueueRepository"/>
-    <preference for="Mulberry\Warranty\Api\Data\QueueInterface" type="Mulberry\Warranty\Model\Data\Queue"/>
+    <preference for="Mulberry\Warranty\Api\Data\QueueInterface" type="Mulberry\Warranty\Model\Queue"/>
     <preference for="Mulberry\Warranty\Api\QueueProcessorInterface" type="Mulberry\Warranty\Model\Processor\Queue"/>
     <preference for="Mulberry\Warranty\Api\AddWarrantyProcessorInterface" type="Mulberry\Warranty\Model\Processor\AddWarranty"/>
 
