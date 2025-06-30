@@ -9,18 +9,21 @@
             "order_identifier": true
         }
     },
-    "mulberry_queue": {
+    "mulberry_warranty_queue": {
         "column": {
+            "entity_id": true,
             "order_id": true,
             "action_type": true,
             "sync_status": true,
             "sync_date": true
         },
         "index": {
-            "MULBERRY_QUEUE_ORDER_ID": true
+            "MULBERRY_WARRANTY_QUEUE_ORDER_ID": true
         },
         "constraint": {
-            "MULBERRY_QUEUE_ORDER_ID_SALES_ORDER_ENTITY_ID": true
+            "PRIMARY": true,
+            "MULBERRY_WARRANTY_QUEUE_ORDER_ID_SALES_ORDER_ENTITY_ID": true,
+            "MULBERRY_WARRANTY_QUEUE_ORDER_ID_ACTION_TYPE": true
         }
     }
 }
