@@ -6,6 +6,7 @@ use Magento\Framework\Api\SearchCriteriaBuilder;
 use Magento\Framework\App\State;
 use Magento\Framework\App\Area;
 use Magento\Framework\Console\Cli;
+use Magento\Framework\Exception\NoSuchEntityException;
 use Magento\Sales\Api\Data\OrderInterface;
 use Magento\Sales\Api\OrderRepositoryInterface;
 use Mulberry\Warranty\Api\QueueProcessorInterface;
@@ -17,6 +18,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 class SyncOrder extends Command
 {
     private const INPUT_KEY_ORDER_ID = 'order_id';
+    private const INPUT_KEY_INCREMENT_ID = 'increment_id';
     private const MESSAGE_SUCCESS = 'Success: %s';
     private const MESSAGE_ERROR = 'Error: %s';
 
@@ -47,7 +49,8 @@ class SyncOrder extends Command
     {
         $this->setName('mulberry:warranty:sync_order');
         $this->setDescription('Re-sync the Magento order to Mulberry platform');
-        $this->addOption(self::INPUT_KEY_ORDER_ID, 'o', InputOption::VALUE_REQUIRED, 'Magento Order Increment ID');
+        $this->addOption(self::INPUT_KEY_ORDER_ID, 'o', InputOption::VALUE_REQUIRED, 'Magento Order ID (comma-separated for multiple)');
+        $this->addOption(self::INPUT_KEY_INCREMENT_ID, 'i', InputOption::VALUE_REQUIRED, 'Magento Order Increment ID (comma-separated for multiple)');
 
         parent::configure();
     }
@@ -58,31 +61,58 @@ class SyncOrder extends Command
      * @param InputInterface $input
      * @param OutputInterface $output
      *
-     * @return void
+     * @return int
      */
     protected function execute(InputInterface $input, OutputInterface $output): int
     {
         try {
             $this->state->setAreaCode(Area::AREA_FRONTEND);
 
-            $incrementId = $input->getOption(self::INPUT_KEY_ORDER_ID);
-            $order = $this->getOrderByIncrementId($incrementId);
+            $orderIds = $input->getOption(self::INPUT_KEY_ORDER_ID);
+            $incrementIds = $input->getOption(self::INPUT_KEY_INCREMENT_ID);
 
-            if (!$order) {
-                $output->writeln('<info>' . sprintf(self::MESSAGE_ERROR, __('Order with increment ID "%1" is not found.', $incrementId)) . '</info>');
-
+            if (!$orderIds && !$incrementIds) {
+                $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR, __('Please provide either order_id or increment_id parameter')) . '</error>');
                 return Cli::RETURN_FAILURE;
             }
 
-            if ($this->queueProcessor->process($order, QueueProcessorInterface::ACTION_TYPE_ORDER)) {
-                $output->writeln('<info>' . sprintf(self::MESSAGE_SUCCESS, __('Increment ID - %1', $order->getIncrementId())) . '</info>');
-            } else {
-                $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR,
-                        __('There was an error with the order sync, please see mulberry_warranty_queue.log file for more information')) . '</error>');
+            $orders = [];
+            if ($orderIds) {
+                $orderIdArray = array_map('trim', explode(',', $orderIds));
+                $orders = $this->getOrdersByIds($orderIdArray);
+            } elseif ($incrementIds) {
+                $incrementIdArray = array_map('trim', explode(',', $incrementIds));
+                $orders = $this->getOrdersByIncrementIds($incrementIdArray);
             }
+
+            if (empty($orders)) {
+                $identifier = $orderIds ?: $incrementIds;
+                $output->writeln('<info>' . sprintf(self::MESSAGE_ERROR, __('No orders found with provided IDs: "%1"', $identifier)) . '</info>');
+                return Cli::RETURN_FAILURE;
+            }
+
+            $successCount = 0;
+            $errorCount = 0;
+
+            foreach ($orders as $order) {
+                try {
+                    $this->queueProcessor->addToQueue($order, QueueProcessorInterface::ACTION_TYPE_ORDER, true);
+                    if ($this->queueProcessor->process($order, QueueProcessorInterface::ACTION_TYPE_ORDER)) {
+                        $output->writeln('<info>' . sprintf(self::MESSAGE_SUCCESS, __('Increment ID - %1', $order->getIncrementId())) . '</info>');
+                        $successCount++;
+                    } else {
+                        $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR, __('Failed to sync order with increment ID "%1"', $order->getIncrementId())) . '</error>');
+                        $errorCount++;
+                    }
+                } catch (\Exception $e) {
+                    $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR, __('Error processing order "%1": %2', $order->getIncrementId(), $e->getMessage())) . '</error>');
+                    $errorCount++;
+                }
+            }
+
+            $output->writeln(__('Processed %1 orders: %2 successful, %3 failed', count($orders), $successCount, $errorCount));
         } catch (\Exception $e) {
             $output->writeln('<error>' . sprintf(self::MESSAGE_ERROR, $e->getMessage()) . '</error>');
-
             return Cli::RETURN_FAILURE;
         }
 
@@ -90,16 +120,28 @@ class SyncOrder extends Command
     }
 
     /**
-     * @param $incrementId
-     * @return OrderInterface|null
+     * @param array $orderIds
+     * @return OrderInterface[]
      */
-    private function getOrderByIncrementId($incrementId): ?OrderInterface
+    private function getOrdersByIds(array $orderIds): array
     {
         $criteria = $this->searchCriteriaBuilder
-            ->addFilter(OrderInterface::INCREMENT_ID, $incrementId)
+            ->addFilter(OrderInterface::ENTITY_ID, $orderIds, 'in')
             ->create();
-        $orders = $this->orderRepository->getList($criteria)->getItems();
 
-        return $orders ? current($orders) : null;
+        return $this->orderRepository->getList($criteria)->getItems();
+    }
+
+    /**
+     * @param array $incrementIds
+     * @return OrderInterface[]
+     */
+    private function getOrdersByIncrementIds(array $incrementIds): array
+    {
+        $criteria = $this->searchCriteriaBuilder
+            ->addFilter(OrderInterface::INCREMENT_ID, $incrementIds, 'in')
+            ->create();
+
+        return $this->orderRepository->getList($criteria)->getItems();
     }
 }

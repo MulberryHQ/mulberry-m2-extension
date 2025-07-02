@@ -33,6 +33,11 @@
         <constraint xsi:type="foreign" referenceId="MULBERRY_WARRANTY_QUEUE_ORDER_ID_SALES_ORDER_ENTITY_ID" table="mulberry_warranty_queue"
                     column="order_id" referenceTable="sales_order" referenceColumn="entity_id" onDelete="CASCADE"/>
 
+        <constraint xsi:type="unique" referenceId="MULBERRY_WARRANTY_QUEUE_ORDER_ID_ACTION_TYPE">
+            <column name="order_id"/>
+            <column name="action_type"/>
+        </constraint>
+
         <index referenceId="MULBERRY_WARRANTY_QUEUE_ORDER_ID" indexType="btree">
             <column name="order_id"/>
         </index>
