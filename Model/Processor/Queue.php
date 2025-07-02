@@ -93,37 +93,42 @@ class Queue implements QueueProcessorInterface
      */
     public function addToQueue(OrderInterface $order, string $type, bool $force = false): bool
     {
-        /**
-         * Skip this when order is not saved yet
-         */
-        if (!$order->getId()) {
+        try {
+            /**
+             * Skip this when order is not saved yet
+             */
+            if (!$order->getId()) {
+                return false;
+            }
+
+            /**
+             * @var $queueModel QueueModel
+             */
+            $queueModel = $this->queueRepository->getByOrderIdAndActionType($order->getId(), $type);
+
+            /**
+             * Skip adding record to the queue if no "force" flag is set.
+             */
+            if ($queueModel->getId() && !$force) {
+                return false;
+            }
+
+            $queueModel->setOrderId($order->getId());
+            $queueModel->setActionType($type);
+
+            /**
+             * Reset sync status field if order is force-added to the queue
+             */
+            if ($force) {
+                $queueModel->setSyncStatus(null);
+                $queueModel->setSyncDate(null);
+            }
+
+            $this->queueRepository->save($queueModel);
+        } catch (\Exception $e) {
+            $this->logger->error(__('There was an error adding "%1" to the Mulberry queue, error: %2', $order->getIncrementId(), $e->getMessage()));
             return false;
         }
-
-        /**
-         * @var $queueModel QueueModel
-         */
-        $queueModel = $this->queueRepository->getByOrderIdAndActionType($order->getId(), $type);
-
-        /**
-         * Skip adding record to the queue if no "force" flag is set.
-         */
-        if ($queueModel->getId() && !$force) {
-            return false;
-        }
-
-        $queueModel->setOrderId($order->getId());
-        $queueModel->setActionType($type);
-
-        /**
-         * Reset sync status field if order is force-added to the queue
-         */
-        if ($force) {
-            $queueModel->setSyncStatus(null);
-            $queueModel->setSyncDate(null);
-        }
-
-        $this->queueRepository->save($queueModel);
 
         return true;
     }
